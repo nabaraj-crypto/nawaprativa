@@ -41,7 +41,11 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-tb2qkxzlau+(^(3qebdsk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+ALLOWED_HOSTS = os.environ.get(
+    'ALLOWED_HOSTS', 
+    'localhost,127.0.0.1,nawaprativaschool.onrender.com,nawaprativa.edu.np,www.nawaprativa.edu.np'
+).split(',')
+
 
 
 # Application definition
@@ -100,13 +104,14 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'nawaprativa_db'),
-        'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', '123'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
+        'NAME': 'nawaprativa_l1gs',
+        'USER': 'nawaprativa_l1gs_user',
+        'PASSWORD': 'gSCppbgr9SfaaK3ROYurYH3L554YjBJ8',
+        'HOST': 'dpg-d2l1n275r7bs73d83170-a',
+        'PORT': '5432',
     }
 }
+
 
 
 # Password validation
