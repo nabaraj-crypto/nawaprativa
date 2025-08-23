@@ -1,0 +1,282 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notices - Nawa Prativa Secondary School</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+            min-height: 100vh;
+        }
+        .notices-page {
+            padding:2rem 0; margin-top:100px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.95);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(52,152,219,0.10);
+            padding: 2.5rem 1.5rem 2rem 1.5rem;
+        }
+        h1 {
+            text-align:center;
+            font-size:2.5rem;
+            font-weight:800;
+            color:#2471a3;
+            margin-bottom:1.5rem;
+            letter-spacing:1px;
+        }
+        .notice-controls {
+            display:flex; flex-wrap:wrap; gap:1rem; margin:2rem 0 1.5rem 0; align-items:center; justify-content:center;
+        }
+        .notice-controls input, .notice-controls select {
+            padding:0.7rem 1rem; border-radius:8px; border:1px solid #b2bec3; font-size:1.1rem; background:#f4f8fb; transition:box-shadow .2s;
+        }
+        .notice-controls input:focus, .notice-controls select:focus {
+            outline:none; box-shadow:0 0 0 2px #85c1e9;
+        }
+        .notices-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;
+        }
+        .notice-card {
+            background: linear-gradient(120deg, #f8fafc 60%, #eaf6fb 100%);
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(52,152,219,0.10), 0 1.5px 4px rgba(44,62,80,0.04);
+            padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+            border: none;
+            border-left: 7px solid #3498db; /* Default accent */
+            transition: box-shadow .25s, transform .18s, border-color .2s;
+            cursor:pointer;
+            position:relative;
+            overflow:hidden;
+            animation: fadeInUp 0.7s cubic-bezier(.23,1.01,.32,1) both;
+        }
+        .notice-card.exam { border-left-color: #3498db; background: linear-gradient(120deg, #eaf6fb 60%, #e0f0ff 100%); }
+        .notice-card.announcement { border-left-color: #27ae60; background: linear-gradient(120deg, #eafbf0 60%, #e0ffe6 100%); }
+        .notice-card.holiday { border-left-color: #f39c12; background: linear-gradient(120deg, #fff8e1 60%, #fff3e0 100%); }
+        .notice-card:hover {
+            box-shadow: 0 8px 32px rgba(52,152,219,0.18), 0 2px 8px rgba(44,62,80,0.08);
+            transform: translateY(-4px) scale(1.025);
+            border-left-width: 10px;
+        }
+        .notice-card h3 {
+            color:#21618c;
+            font-size:1.3rem;
+            font-weight:700;
+            margin-bottom:0.5rem;
+        }
+        .notice-meta {
+            font-size:0.98rem; color:#5d6d7e; margin-bottom:0.7rem; display:flex; gap:1rem; flex-wrap:wrap;
+        }
+        .priority.high {
+            color:#e74c3c; font-weight:700; background:#fdeaea; border-radius:8px; padding:0.15rem 0.7rem; margin-left:0.5rem;
+        }
+        .category {
+            color:#2980b9; background:#eaf2fb; border-radius:8px; padding:0.15rem 0.7rem;
+        }
+        .notice-card-content p {
+            color:#34495e; font-size:1.08rem; margin-bottom:0.5rem;
+        }
+        .download-link {
+            color:#2471a3; text-decoration:underline; font-size:1rem; font-weight:500;
+        }
+        .no-results, .error-message {
+            text-align:center; color:#e74c3c; margin:2rem 0; font-size:1.1rem;
+        }
+        /* Modal styles */
+        .modal {
+            display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(44,62,80,0.18); z-index:1000; align-items:center; justify-content:center;
+        }
+        .modal.show { display:flex; animation: fadeIn 0.3s; }
+        .modal-content {
+            background: linear-gradient(120deg, #f8fafc 60%, #eaf6fb 100%);
+            border-radius: 18px;
+            max-width:95vw; width:410px; padding:2.2rem 1.5rem 1.5rem 1.5rem; position:relative;
+            box-shadow: 0 8px 32px rgba(52,152,219,0.18), 0 2px 8px rgba(44,62,80,0.08);
+            animation: fadeInUp 0.5s cubic-bezier(.23,1.01,.32,1) both;
+        }
+        .close-modal {
+            position:absolute; top:1.1rem; right:1.1rem; background:none; border:none; font-size:2rem; color:#888; cursor:pointer; transition:color .2s;
+        }
+        .close-modal:hover { color:#e74c3c; }
+        #modalTitle {
+            color:#21618c; font-size:1.4rem; font-weight:700; margin-bottom:0.5rem;
+        }
+        #modalDate, #modalCategory {
+            color:#5d6d7e; font-size:1rem;
+        }
+        #modalContent { color:#34495e; font-size:1.08rem; margin-bottom:1rem; }
+        #modalAttachment { margin-top:0.5rem; }
+        @media (max-width:600px) {
+            .container { padding:1rem 0.2rem; }
+            .modal-content { padding:1rem; width:95vw; }
+        }
+        @keyframes fadeInUp {
+            from { opacity:0; transform:translateY(30px); }
+            to { opacity:1; transform:translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity:0; }
+            to { opacity:1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Bootstrap Navbar Start -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+      <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="/">NawaPrativa</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="/gallery/">Gallery</a></li>
+            <li class="nav-item"><a class="nav-link" href="/faculty/">Faculty</a></li>
+            <li class="nav-item"><a class="nav-link" href="/attendance/">Attendance</a></li>
+            <li class="nav-item"><a class="nav-link" href="/about/">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="/contact/">Contact</a></li>
+            <li class="nav-item"><a class="nav-link active" href="/notices/">Notices</a></li>
+            <li class="nav-item"><a class="nav-link" href="/results/">Results</a></li>
+            {% if user.is_authenticated %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="{% if user.student_profile and user.student_profile.profile_photo %}{{ user.student_profile.profile_photo.url }}{% elif user.teacher_profile and user.teacher_profile.photo %}{{ user.teacher_profile.photo.url }}{% else %}{% static 'images/avatar-default.png' %}{% endif %}" alt="avatar" style="width:32px;height:32px;border-radius:50%;object-fit:cover;margin-right:0.5em;">
+                {{ user.get_full_name|default:user.username }}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
+                <li><h6 class="dropdown-header">Signed in as<br><span class="fw-bold">{{ user.get_full_name|default:user.username }}</span></h6></li>
+                <li><a class="dropdown-item" href="/dashboard/">Dashboard</a></li>
+                <li><a class="dropdown-item" href="/profile/">Profile</a></li>
+                <li><a class="dropdown-item" href="/my-details/">My Details</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="/logout/">Logout</a></li>
+              </ul>
+            </li>
+            {% else %}
+            <li class="nav-item"><a class="nav-link" href="/login/">Login</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'student_signup_page' %}">Sign Up</a></li>
+            {% endif %}
+                </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Bootstrap Navbar End -->
+    <main class="notices-page">
+        <div class="container">
+            <h1>School Notices</h1>
+            <div class="notice-controls">
+                <input type="text" id="noticeSearchInput" placeholder="Search notices..." style="flex:1;min-width:180px;">
+                <select id="noticeCategoryFilter">
+                    <option value="All">All Category</option>
+                    <option value="Exam">Exam</option>
+                    <option value="Announcement">Announcement</option>
+                    <option value="Holiday">Holiday</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="notices-grid" id="noticesGrid"></div>
+            <div style="margin-top:2rem; text-align:center;">
+                <a href="/" style="color:#3498db; text-decoration:underline; font-weight:600;">&larr; Back to Home</a>
+            </div>
+        </div>
+    </main>
+    <!-- Notice Modal -->
+    <div id="noticeModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeModalBtn" aria-label="Close Modal">&times;</button>
+            <h2 id="modalTitle"></h2>
+            <div style="margin-bottom:0.5rem; color:#555;">
+                <span id="modalDate"></span> | <span id="modalCategory"></span>
+            </div>
+            <div id="modalContent" style="margin-bottom:1rem;"></div>
+            <div id="modalAttachment"></div>
+        </div>
+    </div>
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Bhakunde Beshi, Kavrepalanchok, Nepal</p>
+                <p><i class="fas fa-phone"></i> +977-9761696109</p>
+                <p><i class="fas fa-envelope"></i> info@nawaprativa.edu.np</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about/">About</a></li>
+                    <li><a href="/faculty/">Faculty</a></li>
+                    <li><a href="/attendance/">Attendance</a></li>
+                    <li><a href="/notices/">Notices</a></li>
+                    <li><a href="/gallery/">Gallery</a></li>
+                    <li><a href="/results/">Results</a></li>
+                    <li><a href="/contact/">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="#" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/nabarajkc_34/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Nawa Prativa Secondary School. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="{% static 'js/notices.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    // Responsive menu toggle for mobile
+    const menuToggle = document.getElementById('menuToggle');
+    const mainNav = document.getElementById('mainNav');
+    if (menuToggle && mainNav) {
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            mainNav.classList.toggle('active');
+        });
+        document.addEventListener('click', (e) => {
+            if (!menuToggle.contains(e.target) && !mainNav.contains(e.target)) {
+                menuToggle.classList.remove('active');
+                mainNav.classList.remove('active');
+            }
+        });
+        const navLinks = document.querySelectorAll('.nav-list a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menuToggle.classList.remove('active');
+                mainNav.classList.remove('active');
+            });
+        });
+    }
+    $(function() {
+        $('#logoutBtn').on('click', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: '/api/logout/',
+                type: 'POST',
+                headers: { 'X-CSRFToken': (document.cookie.match('(^|;)\\s*csrftoken\\s*=\\s*([^;]+)')||[])[2] },
+                success: function() {
+                    window.location.reload();
+                },
+                error: function() {
+                    alert('Logout failed. Please try again.');
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,657 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nawa Prativa Secondary School - Home</title>
+    <!-- Styles -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        /* Custom style for login dropdown submenu */
+        .dropdown-submenu {
+            position: relative;
+        }
+        .dropdown-submenu > .dropdown-menu {
+            top: 0;
+            left: 100%;
+            margin-top: -1px;
+            display: none;
+            position: absolute;
+        }
+        .dropdown-submenu:hover > .dropdown-menu,
+        .dropdown-submenu:focus-within > .dropdown-menu {
+            display: block;
+        }
+        /* Notice Modal Overlay Styles */
+        #latestNoticeModalOverlay {
+            position: fixed;
+            z-index: 2000;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(30, 34, 40, 0.45);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.5s;
+        }
+        #latestNoticeModalOverlay.show {
+            display: flex;
+        }
+        #latestNoticeModalCard {
+            max-width: 500px;
+            width: 95vw;
+            position: relative;
+            box-shadow: 0 8px 32px rgba(52,152,219,0.18), 0 2px 8px rgba(44,62,80,0.08);
+            animation: fadeInUp 0.7s cubic-bezier(.23,1.01,.32,1) both;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Latest Notice Banner -->
+    {% if latest_notice %}
+    <div id="latestNoticeBanner" class="alert alert-info alert-dismissible fade show mb-0 rounded-0" role="alert" style="display:none;">
+        <strong>Notice:</strong> <span id="latestNoticeText">{{ latest_notice.title }}{% if latest_notice.content %}: {{ latest_notice.content|truncatechars:120 }}{% endif %}</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" id="closeNoticeBtn"></button>
+    </div>
+    <script>
+    // Show notice only if not dismissed or if notice changed
+    (function() {
+        var noticeId = '{{ latest_notice.id }}';
+        var dismissedId = localStorage.getItem('dismissedNoticeId');
+        if (dismissedId !== noticeId) {
+            document.getElementById('latestNoticeBanner').style.display = 'block';
+        }
+        document.getElementById('closeNoticeBtn').onclick = function() {
+            localStorage.setItem('dismissedNoticeId', noticeId);
+        };
+    })();
+    </script>
+    {% endif %}
+    <!-- Bootstrap Navbar Start -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+      <div class="container-fluid">
+        <a class="navbar-brand fw-bold d-flex align-items-center" href="/">
+          <img src="{% static 'images/gallery/schoolslogo.jpg' %}" alt="School Logo" style="width:40px;height:40px;border-radius:50%;object-fit:cover;margin-right:0.5em;border:2px solid #eaf6fb;box-shadow:0 1px 4px rgba(44,62,80,0.08);">
+          NawaPrativa
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="/gallery/">Gallery</a></li>
+            <li class="nav-item"><a class="nav-link" href="/faculty/">Faculty</a></li>
+            <li class="nav-item"><a class="nav-link" href="/attendance/">Attendance</a></li>
+            <li class="nav-item"><a class="nav-link" href="/about/">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="/contact/">Contact</a></li>
+            <li class="nav-item"><a class="nav-link" href="/notices/">Notices</a></li>
+            <li class="nav-item"><a class="nav-link" href="/results/">Results</a></li>
+            {% if user.is_authenticated %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="{% if user.student_profile and user.student_profile.profile_photo %}{{ user.student_profile.profile_photo.url }}{% elif user.teacher_profile and user.teacher_profile.photo %}{{ user.teacher_profile.photo.url }}{% else %}{% static 'images/avatar-default.png' %}{% endif %}" alt="avatar" style="width:32px;height:32px;border-radius:50%;object-fit:cover;margin-right:0.5em;">
+                {{ user.get_full_name|default:user.username }}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
+                <li><h6 class="dropdown-header">Signed in as<br><span class="fw-bold">{{ user.get_full_name|default:user.username }}</span></h6></li>
+
+                <li><a class="dropdown-item" href="/dashboard/">Dashboard</a></li>
+                <li><a class="dropdown-item" href="/profile/">Profile</a></li>
+                <li><a class="dropdown-item" href="/my-details/">My Details</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="/logout/">Logout</a></li>
+              </ul>
+            </li>
+            {% else %}
+            <li class="nav-item"><a class="nav-link" href="/login/">Login</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'student_signup_page' %}">Sign Up</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Bootstrap Navbar End -->
+    <!-- Banner Slider -->
+    <div class="banner-slider">
+        <div class="slider-wrapper">
+            {% if banners %}
+                {% for banner in banners %}
+                    <div class="slide" style="background-image: url('{{ banner.image.url }}');"></div>
+                {% endfor %}
+            {% else %}
+                <!-- Default banners if no database entries exist -->
+                <div class="slide" style="background-image: url('{% static 'images/banner/school-front.jpg' %}');"></div>
+                <div class="slide" style="background-image: url('{% static 'images/banner/classroom.jpg' %}');"></div>
+                <div class="slide" style="background-image: url('{% static 'images/banner/students-assembly.jpg' %}');"></div>
+                <div class="slide" style="background-image: url('{% static 'images/banner/computer-lab.jpg' %}');"></div>
+            {% endif %}
+        </div>
+        <div class="slider-overlay"></div>
+        <div class="slider-content">
+            <img src="{% static 'images/gallery/schoolslogo.jpg' %}" alt="School Logo" class="slider-logo" />
+            <h1 class="slider-title">{{ school_info.name|default:"Shree Nawa Prativa Secondary School, Bhakunde Beshi, Kavre" }}</h1>
+            <p class="slider-tagline">{{ school_info.tagline|default:"Inspiring Young Minds Since 2060 B.S." }}</p>
+        </div>
+        <div class="slider-nav">
+            <button class="slider-arrow prev" aria-label="Previous slide">&lt;</button>
+            <div class="slider-dots"></div>
+            <button class="slider-arrow next" aria-label="Next slide">&gt;</button>
+        </div>
+    </div>
+    <!-- End Banner Slider -->
+    <!-- Welcome Message Carousel -->
+    <section class="welcome-carousel">
+        <div class="carousel-container">
+            <div class="carousel-track">
+                {% if welcome_messages %}
+                    {% for message in welcome_messages %}
+                        <div class="carousel-slide {% if forloop.first %}active{% endif %}">
+                            <h2 class="welcome-title">{{ message.title }}</h2>
+                            <p class="welcome-subtitle">{{ message.subtitle }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <!-- Default welcome messages if no database entries exist -->
+                    <div class="carousel-slide active">
+                        <h2 class="welcome-title">Welcome to Shree Nawa Prativa Secondary School!</h2>
+                        <p class="welcome-subtitle">Nurturing Minds, Building Futures</p>
+                    </div>
+                    <div class="carousel-slide">
+                        <h2 class="welcome-title">Quality Education, Bright Future!</h2>
+                        <p class="welcome-subtitle">Empowering Students for Tomorrow's Challenges</p>
+                    </div>
+                    <div class="carousel-slide">
+                        <h2 class="welcome-title">Discipline • Dedication • Excellence</h2>
+                        <p class="welcome-subtitle">Our Core Values for Success</p>
+                    </div>
+                    <div class="carousel-slide">
+                        <h2 class="welcome-title">Join Our Learning Community</h2>
+                        <p class="welcome-subtitle">Where Every Student's Potential is Realized</p>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="carousel-indicators">
+                {% if welcome_messages %}
+                    {% for message in welcome_messages %}
+                        <button class="indicator {% if forloop.first %}active{% endif %}" aria-label="Slide {{ forloop.counter }}"></button>
+                    {% endfor %}
+                {% else %}
+                    <!-- Default indicators if no database entries exist -->
+                    <button class="indicator active" aria-label="Slide 1"></button>
+                    <button class="indicator" aria-label="Slide 2"></button>
+                    <button class="indicator" aria-label="Slide 3"></button>
+                    <button class="indicator" aria-label="Slide 4"></button>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    <!-- Latest Notice Main Display -->
+    {% if latest_notice %}
+    <div class="container" id="latestNoticeContainer" style="max-width:900px; margin:2rem auto 0 auto; overflow:visible;">
+        <div class="notices-grid" style="overflow:visible;">
+            <div class="notice-card {{ latest_notice.category|lower }}" id="latestNoticeCard" style="position:relative; overflow:visible;">
+                <button type="button" class="btn-close" aria-label="Close" id="closeLatestNoticeBtn" style="position:absolute;top:1rem;right:1rem;"></button>
+                <h3>{{ latest_notice.title }}</h3>
+                <div class="notice-meta">
+                    <span class="date">{{ latest_notice.date|date:"F j, Y" }}</span>
+                    <span class="category">{{ latest_notice.category }}</span>
+                    {% if latest_notice.important %}<span class="priority high">Important</span>{% endif %}
+                </div>
+                <div class="notice-card-content">
+                    <p>{{ latest_notice.content|linebreaksbr }}</p>
+                    {% if latest_notice.attachment %}
+                        <a href="{{ latest_notice.attachment.url }}" class="download-link" download>Download Attachment</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    (function() {
+        var noticeId = '{{ latest_notice.id }}';
+        var dismissedId = localStorage.getItem('dismissedMainNoticeId');
+        if (dismissedId === noticeId) {
+            document.getElementById('latestNoticeContainer').style.display = 'none';
+        }
+        document.getElementById('closeLatestNoticeBtn').onclick = function() {
+            localStorage.setItem('dismissedMainNoticeId', noticeId);
+            document.getElementById('latestNoticeContainer').style.display = 'none';
+        };
+    })();
+    </script>
+    {% endif %}
+    <!-- Latest Notice Modal Overlay -->
+    {% if latest_notice %}
+    <div id="latestNoticeModalOverlay">
+        <div class="notice-card {{ latest_notice.category|lower }}" id="latestNoticeModalCard">
+            <div style="display:flex;flex-direction:column;align-items:center;">
+                <img src="{% static 'images/gallery/schoolslogo.jpg' %}" alt="School Logo" style="width:90px;height:90px;border-radius:50%;object-fit:cover;margin-bottom:1rem;border:4px solid #eaf6fb;box-shadow:0 2px 8px rgba(44,62,80,0.08);">
+            </div>
+            <button type="button" class="btn-close" aria-label="Close" id="closeLatestNoticeModalBtn" style="position:absolute;top:1rem;right:1rem;"></button>
+            <h3 style="text-align:center;">{{ latest_notice.title }}</h3>
+            <div class="notice-meta" style="justify-content:center;">
+                <span class="date">{{ latest_notice.date|date:"F j, Y" }}</span>
+                <span class="category">{{ latest_notice.category }}</span>
+                {% if latest_notice.important %}<span class="priority high">Important</span>{% endif %}
+            </div>
+            <div class="notice-card-content" style="text-align:center;">
+                <p>{{ latest_notice.content|linebreaksbr }}</p>
+                {% if latest_notice.attachment %}
+                    <a href="{{ latest_notice.attachment.url }}" class="download-link" download>Download Attachment</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <script>
+    (function() {
+        var overlay = document.getElementById('latestNoticeModalOverlay');
+        overlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        document.getElementById('closeLatestNoticeModalBtn').onclick = function() {
+            overlay.classList.remove('show');
+            document.body.style.overflow = '';
+        };
+    })();
+    </script>
+    {% endif %}
+    <!-- Side Menu Toggle Button -->
+    <button class="side-menu-toggle" id="sideMenuToggle" aria-label="Open Side Menu">
+        <i class="fas fa-bars"></i>
+    </button>
+    <!-- Side Menu Overlay -->
+    <div class="side-menu-overlay" id="sideMenuOverlay"></div>
+    <!-- Side Menu -->
+    <aside class="side-menu" id="sideMenu">
+        <div class="side-menu-header">
+            <h2>Explore</h2>
+            <button class="close-btn" id="closeSideMenu" aria-label="Close Side Menu"><i
+                    class="fas fa-times"></i></button>
+        </div>
+        <ul class="side-menu-list">
+            {% if facilities %}
+                {% for facility in facilities %}
+                    <li class="side-menu-item" data-aos="fade-right" data-aos-delay="{{ forloop.counter0 }}0">
+                        <a href="{{ facility.link|default:'#' }}" class="menu-link">
+                            <i class="{{ facility.icon }}"></i>
+                            <div class="menu-content">
+                                <span class="menu-title">{{ facility.name }}</span>
+                                <span class="menu-desc">{{ facility.description }}</span>
+                            </div>
+                        </a>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <!-- Default facilities if no database entries exist -->
+                <li class="side-menu-item" data-aos="fade-right">
+                    <a href="/library/" class="menu-link">
+                        <i class="fas fa-book-reader"></i>
+                        <div class="menu-content">
+                            <span class="menu-title">Library</span>
+                            <span class="menu-desc">A rich collection of books and resources for all students.</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="side-menu-item" data-aos="fade-right" data-aos-delay="50">
+                    <a href="#" class="menu-link">
+                        <i class="fas fa-flask"></i>
+                        <div class="menu-content">
+                            <span class="menu-title">Science Lab</span>
+                            <span class="menu-desc">Modern labs for hands-on science experiments and discovery.</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="side-menu-item" data-aos="fade-right" data-aos-delay="100">
+                    <a href="#" class="menu-link">
+                        <i class="fas fa-desktop"></i>
+                        <div class="menu-content">
+                            <span class="menu-title">Computer Lab</span>
+                            <span class="menu-desc">State-of-the-art computers and internet access for learning.</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="side-menu-item" data-aos="fade-right" data-aos-delay="150">
+                    <a href="#" class="menu-link">
+                        <i class="fas fa-futbol"></i>
+                        <div class="menu-content">
+                            <span class="menu-title">Sports</span>
+                            <span class="menu-desc">Facilities for football, basketball, athletics, and more.</span>
+                        </div>
+                    </a>
+                </li>
+            {% endif %}
+            <li class="side-menu-item" data-aos="fade-right" data-aos-delay="200">
+                <a href="#" class="menu-link">
+                    <i class="fas fa-bus"></i>
+                    <div class="menu-content">
+                        <span class="menu-title">Transportation</span>
+                        <span class="menu-desc">Safe and reliable school bus service for students.</span>
+                    </div>
+                </a>
+            </li>
+            <li class="side-menu-item" data-aos="fade-right" data-aos-delay="250">
+                <a href="#" class="menu-link">
+                    <i class="fas fa-user-graduate"></i>
+                    <div class="menu-content">
+                        <span class="menu-title">Students</span>
+                        <span class="menu-desc">A vibrant student community with clubs and activities.</span>
+                    </div>
+                </a>
+            </li>
+        </ul>
+    </aside>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>Welcome to Nawa Prativa</h1>
+            <p>Nurturing minds, building futures, and creating leaders of tomorrow</p>
+            <div class="hero-buttons">
+                <a href="/about/" class="hero-btn primary">Learn More</a>
+                <a href="/contact/" class="hero-btn secondary">Contact Us</a>
+            </div>
+        </div>
+    </section>
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Quality Education</h3>
+                    <p>Comprehensive curriculum designed to foster academic excellence and personal growth.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Expert Faculty</h3>
+                    <p>Dedicated teachers committed to nurturing young minds and shaping future leaders.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-icon">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <h3>Modern Facilities</h3>
+                    <p>State-of-the-art infrastructure to support innovative learning and development.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3>Excellence</h3>
+                    <p>Consistent track record of academic excellence and student achievements.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Leadership Messages Section -->
+    <section class="leadership-messages">
+        <div class="container">
+            <h2>Messages from Leadership</h2>
+            <div class="messages-grid">
+                {% for msg in leadership_messages %}
+                <div class="message-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'1' }}00">
+                    <div class="message-header">
+                        <div class="message-image">
+                            {% if msg.photo %}
+                                <img src="{{ msg.photo.url }}" alt="{{ msg.name }}" loading="lazy">
+                            {% else %}
+                                <img src="{% static 'images/gallery/schoolslogo.jpg' %}" alt="{{ msg.name }}" loading="lazy">
+                            {% endif %}
+                        </div>
+                        <h3>{{ msg.name }}</h3>
+                        <p>{{ msg.position }}</p>
+                    </div>
+                    <div class="message-content">
+                        <p>{{ msg.message|linebreaks }}</p>
+                        <span class="message-signature">- {{ msg.name }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stat-number" data-count="1000">0</div>
+                    <div class="stat-label">Students</div>
+                </div>
+                <div class="stat-item" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stat-number" data-count="50">0</div>
+                    <div class="stat-label">Teachers</div>
+                </div>
+                <div class="stat-item" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stat-number" data-count="25">0</div>
+                    <div class="stat-label">Years of Excellence</div>
+                </div>
+                <div class="stat-item" data-aos="fade-up" data-aos-delay="400">
+                    <div class="stat-number" data-count="100">0</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest Notices Section -->
+    <section class="notices">
+        <div class="container">
+            <h2>Latest Notices</h2>
+            <div class="notices-grid" id="notices-container">
+                <div class="notice-card" style="border:2px solid #3498db; padding:1rem; margin-bottom:1rem; background:#f8f9fa;">
+                    <h3>Exam Notice</h3>
+                    <div class="notice-meta">
+                        <span class="date">July 8, 2025</span>
+                        <span class="category">Exam</span>
+                        <span class="priority high" style="color:#e74c3c;">Important</span>
+                    </div>
+                    <div class="notice-card-content">
+                        <p>Final term exams will start from July 15. Please check the schedule on the notice board.</p>
+                        <a href="#" class="download-link">Download Schedule</a>
+                    </div>
+                </div>
+                <div class="notice-card" style="border:2px solid #3498db; padding:1rem; margin-bottom:1rem; background:#f8f9fa;">
+                    <h3>Holiday Announcement</h3>
+                    <div class="notice-meta">
+                        <span class="date">July 2, 2025</span>
+                        <span class="category">Announcement</span>
+                    </div>
+                    <div class="notice-card-content">
+                        <p>The school will remain closed on July 4 for a public holiday.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="view-all-notices">
+                <a href="/notices/" class="btn-view-all">View All Notices</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem;">
+                    <img src="{% static 'images/gallery/schoolslogo.jpg' %}" alt="School Logo" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:3px solid #eaf6fb;box-shadow:0 1px 4px rgba(44,62,80,0.08);">
+                    <h3 style="margin:0;">Contact Us</h3>
+                </div>
+                <p><i class="fas fa-map-marker-alt"></i> Bhakunde Beshi, Kavrepalanchok, Nepal</p>
+                <p><i class="fas fa-phone"></i> +977-9761696109</p>
+                <p><i class="fas fa-envelope"></i> info@nawaprativa.edu.np</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about/">About</a></li>
+                    <li><a href="/faculty/">Faculty</a></li>
+                    <li><a href="/attendance/">Attendance</a></li>
+                    <li><a href="/notices/">Notices</a></li>
+                    <li><a href="/gallery/">Gallery</a></li>
+                    <li><a href="/results/">Results</a></li>
+                    <li><a href="/contact/">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="#" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/nabarajkc_34/" target="_blank" aria-label="Instagram"><i
+                            class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Nawa Prativa Secondary School. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+
+        // Menu Toggle Functionality
+        const menuToggle = document.getElementById('menuToggle');
+        const mainNav = document.getElementById('mainNav');
+
+        if (menuToggle && mainNav) {
+            menuToggle.addEventListener('click', () => {
+                menuToggle.classList.toggle('active');
+                mainNav.classList.toggle('active');
+            });
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!menuToggle.contains(e.target) && !mainNav.contains(e.target)) {
+                menuToggle.classList.remove('active');
+                mainNav.classList.remove('active');
+            }
+        });
+
+        // Close menu when clicking on a link
+        const navLinks = document.querySelectorAll('.nav-list a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menuToggle.classList.remove('active');
+                mainNav.classList.remove('active');
+            });
+        });
+
+        // Side Menu Functionality
+        const sideMenuToggle = document.getElementById('sideMenuToggle');
+        const sideMenu = document.getElementById('sideMenu');
+        const sideMenuOverlay = document.getElementById('sideMenuOverlay');
+        const closeSideMenu = document.getElementById('closeSideMenu');
+
+        sideMenuToggle.addEventListener('click', () => {
+            sideMenu.classList.add('active');
+            sideMenuOverlay.classList.add('active');
+        });
+
+        const closeMenu = () => {
+            sideMenu.classList.remove('active');
+            sideMenuOverlay.classList.remove('active');
+        };
+
+        closeSideMenu.addEventListener('click', closeMenu);
+        sideMenuOverlay.addEventListener('click', closeMenu);
+
+        // Stats Counter Animation
+        const stats = document.querySelectorAll('.stat-number');
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = entry.target;
+                    const count = parseInt(target.getAttribute('data-count'));
+                    let current = 0;
+                    const duration = 2000;
+                    const increment = count / (duration / 16);
+
+                    const updateCount = () => {
+                        current += increment;
+                        if (current < count) {
+                            target.textContent = Math.floor(current);
+                            requestAnimationFrame(updateCount);
+                        } else {
+                            target.textContent = count;
+                        }
+                    };
+
+                    updateCount();
+                    observer.unobserve(target);
+                }
+            });
+        }, observerOptions);
+
+        stats.forEach(stat => observer.observe(stat));
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+$(function() {
+    $('#logoutBtnApi').on('click', function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: '/api/logout/', // Use the API for student logout
+            type: 'POST',
+            headers: { 'X-CSRFToken': (document.cookie.match('(^|;)\\s*csrftoken\\s*=\\s*([^;]+)')||[])[2] },
+            success: function() {
+                window.location.href = '/';
+            },
+            error: function() {
+                alert('Logout failed. Please try again.');
+            }
+        });
+    });
+});
+    </script>
+    <script>
+// Dropdown submenu click for mobile
+$(function() {
+    $('.dropdown-submenu > .dropdown-toggle').on('click', function(e) {
+        e.preventDefault();
+        var submenu = $(this).next('.dropdown-menu');
+        $('.dropdown-submenu .dropdown-menu').not(submenu).hide();
+        submenu.toggle();
+        e.stopPropagation();
+    });
+});
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

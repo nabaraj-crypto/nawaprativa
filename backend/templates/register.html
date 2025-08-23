@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Online Homework System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', 'Poppins', Arial, sans-serif; background: #F5F6FA; margin: 0; }
+        .register-container { max-width: 420px; margin: 3rem auto; background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(47,128,237,0.07); padding: 2.5rem 2rem; }
+        .register-title { text-align: center; font-size: 2rem; font-weight: 700; color: #2F80ED; margin-bottom: 1.2rem; }
+        .register-form label { font-weight: 600; margin-bottom: 0.3rem; display: block; }
+        .register-form input, .register-form select { width: 100%; padding: 0.7rem 1rem; border-radius: 8px; border: 1.5px solid #e0e0e0; margin-bottom: 1.1rem; font-size: 1rem; }
+        .register-form select { cursor: pointer; }
+        .register-form button { width: 100%; background: #2F80ED; color: #fff; border: none; border-radius: 8px; padding: 0.9rem; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .register-form button:hover { background: #1c5db6; }
+        .role-row { display: flex; gap: 1rem; margin-bottom: 1.1rem; }
+        .role-row label { font-weight: 500; margin-bottom: 0; }
+        .register-footer { text-align: center; margin-top: 1.2rem; color: #888; }
+        .register-footer a { color: #2F80ED; text-decoration: none; font-weight: 600; }
+        .register-footer a:hover { text-decoration: underline; }
+        .extra-fields { display: none; }
+        @media (max-width: 600px) { .register-container { padding: 1.2rem 0.5rem; } }
+    </style>
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-title">Create Account</div>
+        <form class="register-form" id="registerForm">
+            <div class="role-row">
+                <label><input type="radio" name="role" value="student" checked> Student</label>
+                <label><input type="radio" name="role" value="teacher"> Teacher</label>
+            </div>
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" required>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+            <div class="extra-fields" id="studentFields">
+                <label for="student_class">Class</label>
+                <input type="text" id="student_class" name="student_class">
+            </div>
+            <div class="extra-fields" id="teacherFields">
+                <label for="subject">Subject</label>
+                <input type="text" id="subject" name="subject">
+            </div>
+            <button type="submit">Register</button>
+        </form>
+        <div class="register-footer">Already have an account? <a href="/login/">Login</a></div>
+        <div id="registerMsg" style="margin-top:1rem;"></div>
+    </div>
+    <script>
+      feather.replace();
+      // Show/hide extra fields based on role
+      const roleRadios = document.querySelectorAll('input[name="role"]');
+      const studentFields = document.getElementById('studentFields');
+      const teacherFields = document.getElementById('teacherFields');
+      function updateFields() {
+        if (document.querySelector('input[name="role"]:checked').value === 'student') {
+          studentFields.style.display = 'block';
+          teacherFields.style.display = 'none';
+        } else {
+          studentFields.style.display = 'none';
+          teacherFields.style.display = 'block';
+        }
+      }
+      roleRadios.forEach(r => r.addEventListener('change', updateFields));
+      updateFields();
+      // TODO: AJAX registration logic here
+      document.getElementById('registerForm').onsubmit = function(e) {
+        e.preventDefault();
+        const data = {
+          role: document.querySelector('input[name="role"]:checked').value,
+          name: document.getElementById('name').value,
+          email: document.getElementById('email').value,
+          password: document.getElementById('password').value,
+          student_class: document.getElementById('student_class').value,
+          subject: document.getElementById('subject').value
+        };
+        fetch('/api/register/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        })
+        .then(res => res.json().then(json => ({ok: res.ok, json})))
+        .then(({ok, json}) => {
+          if (ok && json.success) {
+            document.getElementById('registerMsg').innerHTML = '<div style="color:green;font-weight:600;">Registration successful! Redirecting to login...</div>';
+            setTimeout(() => { window.location.href = '/login/'; }, 1200);
+          } else {
+            let msg = 'Registration failed.';
+            if (json) {
+              msg += '<ul>';
+              for (const [field, errors] of Object.entries(json)) {
+                msg += `<li><b>${field}:</b> ${Array.isArray(errors) ? errors.join(', ') : errors}</li>`;
+              }
+              msg += '</ul>';
+            }
+            document.getElementById('registerMsg').innerHTML = '<div style="color:red;">' + msg + '</div>';
+          }
+        })
+        .catch(() => {
+          document.getElementById('registerMsg').innerHTML = '<div style="color:red;">Registration failed. Please try again.</div>';
+        });
+      };
+    </script>
+</body>
+</html> 

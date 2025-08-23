@@ -1,0 +1,419 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    .results-spreadsheet-container {
+        margin: 20px 0;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .spreadsheet-controls {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    
+    .filter-group {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .filter-group label {
+        font-weight: 600;
+        color: #495057;
+    }
+    
+    .filter-group select {
+        padding: 8px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        background: white;
+    }
+    
+    .btn-spreadsheet {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .btn-primary {
+        background: #2196f3;
+        color: white;
+    }
+    
+    .btn-success {
+        background: #4caf50;
+        color: white;
+    }
+    
+    .btn-warning {
+        background: #ff9800;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="results-spreadsheet-container">
+    <div class="spreadsheet-header">
+        <h2>📊 Results Management - Spreadsheet View</h2>
+        <p>Manage student results with dynamic calculations and real-time updates</p>
+    </div>
+    
+    <div class="spreadsheet-controls">
+        <a href="{% url 'admin:core_result_spreadsheet' %}" class="btn-spreadsheet btn-primary" style="margin-bottom: 15px; display: inline-block;">
+            📊 Open Full Spreadsheet View
+        </a>
+        
+        <div class="filter-group">
+            <label for="class-filter">Class:</label>
+            <select id="class-filter">
+                <option value="">All Classes</option>
+                <option value="10">Class 10</option>
+                <option value="9">Class 9</option>
+                <option value="8">Class 8</option>
+                <option value="7">Class 7</option>
+                <option value="6">Class 6</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label for="exam-filter">Exam Type:</label>
+            <select id="exam-filter">
+                <option value="">All Exams</option>
+                <option value="Final Term">Final Term</option>
+                <option value="Mid Term">Mid Term</option>
+                <option value="Unit Test">Unit Test</option>
+                <option value="Pre-Board">Pre-Board</option>
+                <option value="Board Exam">Board Exam</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label for="year-filter">Academic Year:</label>
+            <select id="year-filter">
+                <option value="">All Years</option>
+                <option value="2024-25">2024-25</option>
+                <option value="2023-24">2023-24</option>
+                <option value="2022-23">2022-23</option>
+            </select>
+        </div>
+        
+        <button class="btn-spreadsheet btn-primary" id="add-result-row">
+            ➕ Add New Row
+        </button>
+        
+        <button class="btn-spreadsheet btn-success" id="save-all-results">
+            💾 Save All Results
+        </button>
+        
+        <button class="btn-spreadsheet btn-warning" id="generate-analytics">
+            📈 Generate Analytics
+        </button>
+    </div>
+    
+    <div class="results-spreadsheet">
+        <table class="spreadsheet-table">
+            <thead>
+                <tr>
+                    <th rowspan="2">Name</th>
+                    <th colspan="5" style="text-align: center; background: #e8f5e8;">Subjects</th>
+                    <th rowspan="2">Total</th>
+                    <th rowspan="2">Percentage</th>
+                    <th rowspan="2">Grade</th>
+                    <th rowspan="2">GPA</th>
+                    <th rowspan="2">Remarks</th>
+                    <th rowspan="2">Actions</th>
+                </tr>
+                <tr>
+                    <th class="subject-column">Nepali</th>
+                    <th class="subject-column">Math</th>
+                    <th class="subject-column">Science</th>
+                    <th class="subject-column">Computer</th>
+                    <th class="subject-column">Social</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in cl.queryset %}
+                <tr class="result-row" data-result-id="{{ result.id }}">
+                    <td class="student-name">
+                        <input type="text" class="spreadsheet-input student-name-input" value="{{ result.student_name }}" data-field="student_name">
+                    </td>
+                    <td class="subject-column">
+                        <input type="number" class="spreadsheet-input subject-mark" data-max-marks="100" placeholder="0" min="0" max="100" data-subject="nepali">
+                    </td>
+                    <td class="subject-column">
+                        <input type="number" class="spreadsheet-input subject-mark" data-max-marks="100" placeholder="0" min="0" max="100" data-subject="math">
+                    </td>
+                    <td class="subject-column">
+                        <input type="number" class="spreadsheet-input subject-mark" data-max-marks="100" placeholder="0" min="0" max="100" data-subject="science">
+                    </td>
+                    <td class="subject-column">
+                        <input type="number" class="spreadsheet-input subject-mark" data-max-marks="100" placeholder="0" min="0" max="100" data-subject="computer">
+                    </td>
+                    <td class="subject-column">
+                        <input type="number" class="spreadsheet-input subject-mark" data-max-marks="100" placeholder="0" min="0" max="100" data-subject="social">
+                    </td>
+                    <td class="total-column total-mark">{{ result.total|default:"0" }}</td>
+                    <td class="percentage-column percentage-mark">{{ result.percentage|default:"0.00" }}%</td>
+                    <td class="grade-column grade-mark">{{ result.get_performance_status|default:"-" }}</td>
+                    <td class="gpa-column gpa-mark">{{ result.gpa|default:"0.00" }}</td>
+                    <td class="remarks-column remarks-mark">{{ result.remarks|default:"-" }}</td>
+                    <td class="actions-column">
+                        <a href="{% url 'admin:core_result_change' result.id %}" class="btn-spreadsheet btn-primary">Edit</a>
+                        <button class="btn-spreadsheet btn-danger" onclick="deleteRow(this)">Delete</button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="12" style="text-align: center; padding: 40px; color: #6c757d;">
+                        <p>No results found. Click "Add New Row" to start adding results.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="spreadsheet-actions">
+        <button class="btn-spreadsheet btn-success" onclick="exportToExcel()">
+            📊 Export to Excel
+        </button>
+        <button class="btn-spreadsheet btn-primary" onclick="importFromExcel()">
+            📥 Import from Excel
+        </button>
+        <button class="btn-spreadsheet btn-warning" onclick="printResults()">
+            🖨️ Print Results
+        </button>
+        <button class="btn-spreadsheet btn-danger" onclick="clearAllData()">
+            🗑️ Clear All
+        </button>
+    </div>
+</div>
+
+<!-- Include the original admin change list content -->
+{{ block.super }}
+{% endblock %}
+
+{% block extrajs %}
+{{ block.super }}
+<script>
+    // Additional JavaScript for the spreadsheet interface
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize filters
+        const classFilter = document.getElementById('class-filter');
+        const examFilter = document.getElementById('exam-filter');
+        const yearFilter = document.getElementById('year-filter');
+        
+        if (classFilter) {
+            classFilter.addEventListener('change', filterResults);
+        }
+        if (examFilter) {
+            examFilter.addEventListener('change', filterResults);
+        }
+        if (yearFilter) {
+            yearFilter.addEventListener('change', filterResults);
+        }
+        
+        // Initialize save functionality
+        const saveBtn = document.getElementById('save-all-results');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', saveAllResults);
+        }
+        
+        // Initialize analytics generation
+        const analyticsBtn = document.getElementById('generate-analytics');
+        if (analyticsBtn) {
+            analyticsBtn.addEventListener('click', generateAnalytics);
+        }
+    });
+    
+    function filterResults() {
+        const classValue = document.getElementById('class-filter').value;
+        const examValue = document.getElementById('exam-filter').value;
+        const yearValue = document.getElementById('year-filter').value;
+        
+        const rows = document.querySelectorAll('.result-row');
+        rows.forEach(row => {
+            let show = true;
+            
+            // Apply filters based on data attributes or content
+            if (classValue && !row.querySelector('.student-name').textContent.includes(classValue)) {
+                show = false;
+            }
+            
+            row.style.display = show ? '' : 'none';
+        });
+    }
+    
+    function saveAllResults() {
+        const rows = document.querySelectorAll('.result-row');
+        const data = [];
+        
+        rows.forEach(row => {
+            const rowData = {
+                student_name: row.querySelector('.student-name-input').value,
+                subjects: {},
+                total: row.querySelector('.total-mark').textContent,
+                percentage: row.querySelector('.percentage-mark').textContent,
+                grade: row.querySelector('.grade-mark').textContent,
+                gpa: row.querySelector('.gpa-mark').textContent,
+                remarks: row.querySelector('.remarks-mark').textContent
+            };
+            
+            // Collect subject marks
+            const subjectInputs = row.querySelectorAll('.subject-mark');
+            subjectInputs.forEach(input => {
+                const subject = input.getAttribute('data-subject');
+                rowData.subjects[subject] = input.value;
+            });
+            
+            data.push(rowData);
+        });
+        
+        // Send data to server
+        fetch('{% url "admin:core_result_changelist" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Results saved successfully!');
+            } else {
+                alert('Error saving results: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error saving results');
+        });
+    }
+    
+    function generateAnalytics() {
+        // Generate analytics for the current results
+        const rows = document.querySelectorAll('.result-row');
+        let totalStudents = rows.length;
+        let passedStudents = 0;
+        let totalGPA = 0;
+        let highestGPA = 0;
+        let lowestGPA = 4.0;
+        
+        rows.forEach(row => {
+            const gpa = parseFloat(row.querySelector('.gpa-mark').textContent) || 0;
+            totalGPA += gpa;
+            
+            if (gpa >= 2.0) {
+                passedStudents++;
+            }
+            
+            if (gpa > highestGPA) {
+                highestGPA = gpa;
+            }
+            
+            if (gpa < lowestGPA && gpa > 0) {
+                lowestGPA = gpa;
+            }
+        });
+        
+        const averageGPA = totalStudents > 0 ? totalGPA / totalStudents : 0;
+        const passPercentage = totalStudents > 0 ? (passedStudents / totalStudents) * 100 : 0;
+        
+        const analytics = {
+            total_students: totalStudents,
+            passed_students: passedStudents,
+            failed_students: totalStudents - passedStudents,
+            average_gpa: averageGPA.toFixed(2),
+            highest_gpa: highestGPA.toFixed(2),
+            lowest_gpa: lowestGPA.toFixed(2),
+            pass_percentage: passPercentage.toFixed(2)
+        };
+        
+        // Display analytics
+        const analyticsHTML = `
+            <div class="message-success">
+                <h4>📊 Analytics Generated</h4>
+                <p><strong>Total Students:</strong> ${analytics.total_students}</p>
+                <p><strong>Passed Students:</strong> ${analytics.passed_students}</p>
+                <p><strong>Failed Students:</strong> ${analytics.failed_students}</p>
+                <p><strong>Average GPA:</strong> ${analytics.average_gpa}</p>
+                <p><strong>Highest GPA:</strong> ${analytics.highest_gpa}</p>
+                <p><strong>Lowest GPA:</strong> ${analytics.lowest_gpa}</p>
+                <p><strong>Pass Percentage:</strong> ${analytics.pass_percentage}%</p>
+            </div>
+        `;
+        
+        const container = document.querySelector('.results-spreadsheet-container');
+        container.insertAdjacentHTML('beforeend', analyticsHTML);
+    }
+    
+    function exportToExcel() {
+        // Export functionality
+        alert('Export to Excel functionality will be implemented here');
+    }
+    
+    function importFromExcel() {
+        // Import functionality
+        alert('Import from Excel functionality will be implemented here');
+    }
+    
+    function printResults() {
+        // Print functionality
+        window.print();
+    }
+    
+    function clearAllData() {
+        if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+            const inputs = document.querySelectorAll('.spreadsheet-input');
+            inputs.forEach(input => {
+                input.value = '';
+            });
+            
+            const calculatedCells = document.querySelectorAll('.total-mark, .percentage-mark, .grade-mark, .gpa-mark, .remarks-mark');
+            calculatedCells.forEach(cell => {
+                cell.textContent = '0';
+            });
+        }
+    }
+    
+    // Add event listeners when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Connect Save All Results button to the saveAllResults function
+        const saveAllButton = document.getElementById('save-all-results');
+        if (saveAllButton) {
+            saveAllButton.addEventListener('click', function() {
+                if (typeof window.saveAllResults === 'function') {
+                    window.saveAllResults();
+                } else {
+                    alert('Save functionality is not available. Please refresh the page.');
+                }
+            });
+        }
+        
+        // Connect other buttons
+        const generateAnalyticsButton = document.getElementById('generate-analytics');
+        if (generateAnalyticsButton) {
+            generateAnalyticsButton.addEventListener('click', generateAnalytics);
+        }
+    });
+</script>
+{% endblock %} 

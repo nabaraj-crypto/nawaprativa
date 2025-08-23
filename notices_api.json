@@ -1,0 +1,26 @@
+﻿
+
+StatusCode        : 200
+StatusDescription : OK
+Content           : [{"id":3,"title":"First Terminal Examination â Notice for All 
+                    Students","content":"This is to inform all students that the First Terminal 
+                    Examination will commence from July 25, 2025 (Thursday). All...
+RawContent        : HTTP/1.1 200 OK
+                    Vary: Accept, Cookie
+                    Allow: GET, HEAD, OPTIONS
+                    X-Frame-Options: DENY
+                    X-Content-Type-Options: nosniff
+                    Referrer-Policy: same-origin
+                    Cross-Origin-Opener-Policy: same-origin
+                    Content...
+Forms             : {}
+Headers           : {[Vary, Accept, Cookie], [Allow, GET, HEAD, OPTIONS], [X-Frame-Options, DENY], 
+                    [X-Content-Type-Options, nosniff]...}
+Images            : {}
+InputFields       : {}
+Links             : {}
+ParsedHtml        : mshtml.HTMLDocumentClass
+RawContentLength  : 1119
+
+
+

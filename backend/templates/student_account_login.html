@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Account Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f5f6fa; }
+        .login-container { max-width: 400px; margin: 5% auto; background: #fff; border-radius: 16px; box-shadow: 0 2px 16px #2F80ED22; padding: 2.5rem 2rem; }
+        .login-title { font-size: 2rem; font-weight: 700; color: #2F80ED; text-align: center; margin-bottom: 1.5rem; }
+        .form-label { font-weight: 600; }
+        .btn-primary { background: #2F80ED; border: none; font-weight: 600; border-radius: 8px; }
+        .btn-primary:hover { background: #1c5db6; }
+        .msg { margin-top: 1.2rem; text-align: center; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-title">Student Account Login</div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+        {% if msg %}
+            {% if 'successful' in msg %}
+                <div class="msg text-success">{{ msg }}</div>
+            {% else %}
+                <div class="msg text-danger">{{ msg }}</div>
+            {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html> 

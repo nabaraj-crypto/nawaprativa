@@ -1,0 +1,22 @@
+asgiref==3.9.1
+Django==5.2.4
+djangorestframework==3.16.0
+pillow==11.3.0
+psycopg2-binary==2.9.10
+sqlparse==0.5.3
+tzdata==2025.2
+# PDF and Excel export packages
+reportlab==4.0.4
+openpyxl==3.1.2
+xlsxwriter==3.1.9
+# Email functionality
+django-cors-headers==4.3.1
+# Additional utilities
+python-dateutil==2.8.2
+pandas>=2.3.0
+# Environment variables
+python-dotenv==1.0.0
+# For production
+gunicorn==21.2.0
+dj-database-url==2.1.0
+whitenoise==6.6.0

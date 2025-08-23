@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile | Online Homework System</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+      body { font-family: 'Inter', 'Poppins', Arial, sans-serif; background: #F5F6FA; margin: 0; }
+      .profile-container { max-width: 540px; margin: 3rem auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(47,128,237,0.08); padding: 2.5rem 2rem; }
+      .profile-header { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem; }
+      .profile-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; background: #eee; }
+      .profile-header h2 { margin: 0; font-size: 2rem; font-weight: 700; color: #2F80ED; }
+      .profile-form label { font-weight: 600; color: #2F80ED; margin-top: 1.2em; display: block; }
+      .profile-form input, .profile-form select { width: 100%; padding: 0.7em 1em; margin-bottom: 1em; border: 1px solid #ddd; border-radius: 6px; font-size: 1em; }
+      .profile-form button { background: #2F80ED; color: #fff; border: none; border-radius: 6px; padding: 0.8em 2em; font-size: 1em; font-weight: 600; cursor: pointer; transition: background 0.18s; }
+      .profile-form button:hover { background: #1c5db6; }
+      .profile-form .form-actions { display: flex; gap: 1em; justify-content: flex-end; }
+      @media (max-width: 600px) { .profile-container { padding: 1.2rem 0.5rem; } .profile-header { flex-direction: column; gap: 0.7rem; } }
+    </style>
+</head>
+<body>
+    <!-- Bootstrap Navbar Start -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+      <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="/">NawaPrativa</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="/gallery/">Gallery</a></li>
+            <li class="nav-item"><a class="nav-link" href="/faculty/">Faculty</a></li>
+            <li class="nav-item"><a class="nav-link" href="/about/">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="/contact/">Contact</a></li>
+            <li class="nav-item"><a class="nav-link" href="/notices/">Notices</a></li>
+            <li class="nav-item"><a class="nav-link" href="/results/">Results</a></li>
+            <li class="nav-item"><a class="nav-link active" href="/profile/">Profile</a></li>
+            {% if user.is_authenticated %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="{% if user.student_profile and user.student_profile.profile_photo %}{{ user.student_profile.profile_photo.url }}{% elif user.teacher_profile and user.teacher_profile.photo %}{{ user.teacher_profile.photo.url }}{% else %}{% static 'images/avatar-default.png' %}{% endif %}" alt="avatar" style="width:32px;height:32px;border-radius:50%;object-fit:cover;margin-right:0.5em;">
+                {{ user.get_full_name|default:user.username }}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
+                <li><h6 class="dropdown-header">Signed in as<br><span class="fw-bold">{{ user.get_full_name|default:user.username }}</span></h6></li>
+                <li><a class="dropdown-item" href="/dashboard/">Dashboard</a></li>
+                <li><a class="dropdown-item" href="/profile/">Profile</a></li>
+                <li><a class="dropdown-item" href="/my-details/">My Details</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="/logout/">Logout</a></li>
+              </ul>
+            </li>
+            {% else %}
+            <li class="nav-item"><a class="nav-link" href="/login/">Login</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'student_signup_page' %}">Sign Up</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Bootstrap Navbar End -->
+  <div class="profile-container">
+    <div class="profile-header">
+      <img src="{% if student.profile_photo %}{{ student.profile_photo.url }}{% else %}{% static 'images/gallery/schoolslogo.jpg' %}{% endif %}" alt="Profile Photo" class="profile-avatar">
+      <div>
+        <h2>Edit Profile</h2>
+      </div>
+    </div>
+    <form class="profile-form" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <label for="full_name">Full Name</label>
+      <input type="text" id="full_name" name="full_name" value="{{ student.full_name }}" required>
+      <label for="student_class">Class</label>
+      <input type="text" id="student_class" name="student_class" value="{{ student.student_class }}" required>
+      <label for="symbol_number">Symbol Number</label>
+      <input type="text" id="symbol_number" name="symbol_number" value="{{ student.symbol_number }}" required>
+      <label for="gender">Gender</label>
+      <select id="gender" name="gender" required>
+        <option value="">Select</option>
+        <option value="Male" {% if student.gender == 'Male' %}selected{% endif %}>Male</option>
+        <option value="Female" {% if student.gender == 'Female' %}selected{% endif %}>Female</option>
+        <option value="Other" {% if student.gender == 'Other' %}selected{% endif %}>Other</option>
+      </select>
+      <label for="date_of_birth">Date of Birth</label>
+      <input type="date" id="date_of_birth" name="date_of_birth" value="{{ student.date_of_birth }}" required>
+      <label for="parent_name">Parent Name</label>
+      <input type="text" id="parent_name" name="parent_name" value="{{ student.parent_name }}">
+      <label for="parent_contact">Parent Contact</label>
+      <input type="text" id="parent_contact" name="parent_contact" value="{{ student.parent_contact }}">
+      <label for="phone_number">Phone Number</label>
+      <input type="text" id="phone_number" name="phone_number" value="{{ student.phone_number }}">
+      <label for="address">Address</label>
+      <input type="text" id="address" name="address" value="{{ student.address }}">
+      <label for="profile_photo">Profile Photo</label>
+      <input type="file" id="profile_photo" name="profile_photo" accept="image/*">
+      <div class="mb-3">
+        <label for="cover_photo" class="form-label">Cover Photo</label>
+        <input type="file" class="form-control" id="cover_photo" name="cover_photo">
+        {% if student.cover_photo %}
+          <img src="{{ student.cover_photo.url }}" alt="Cover Photo" style="width:100%;max-width:320px;margin-top:0.5em;border-radius:10px;">
+        {% endif %}
+      </div>
+      <div class="form-actions">
+        <button type="submit">Save Changes</button>
+        <a href="{% url 'profile_page' %}" class="ohw-btn" style="background:#eee;color:#2F80ED;">Cancel</a>
+      </div>
+    </form>
+  </div>
+  <script src="{% static 'js/main.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

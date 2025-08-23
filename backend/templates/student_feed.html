@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Feed - Nawaprativa School</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #858796;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --light-color: #f8f9fc;
+            --dark-color: #5a5c69;
+            --like-color: #e91e63;
+            --comment-color: #2196f3;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-bottom: 70px; /* Add padding to accommodate the bottom nav */
+        }
+        
+        /* Navigation Styles */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        
+        .bottom-nav ul {
+            display: flex;
+            justify-content: space-around;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        
+        .bottom-nav li {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .bottom-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 0;
+            color: var(--secondary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .bottom-nav a.active {
+            color: var(--primary-color);
+        }
+        
+        .bottom-nav i {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .bottom-nav .nav-label {
+            font-size: 0.8rem;
+        }
+        
+        /* Section Navigation Styles */
+        .section-nav {
+            display: flex;
+            justify-content: space-around;
+            background-color: white;
+            border-radius: var(--border-radius);
+            margin: 0 15px 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        
+        .section-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 0;
+            color: var(--secondary-color);
+            text-decoration: none;
+            transition: var(--transition);
+            flex: 1;
+            text-align: center;
+        }
+        
+        .section-nav a.active {
+            color: var(--primary-color);
+            background-color: rgba(78, 115, 223, 0.1);
+        }
+        
+        .section-nav i {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .section-nav .nav-label {
+            font-size: 0.8rem;
+        }
+
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin: 20px auto;
+            max-width: 800px;
+            overflow: hidden;
+        }
+
+        .header-section {
+            background: linear-gradient(135deg, var(--primary-color), #6f42c1);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .post-form {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin: 20px;
+            padding: 25px;
+            transition: var(--transition);
+        }
+
+        .post-form:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            transition: var(--transition);
+            font-size: 16px;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+            transform: scale(1.02);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), #6f42c1);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(78, 115, 223, 0.4);
+        }
+
+        .post-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin: 20px;
+            overflow: hidden;
+            transition: var(--transition);
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        .post-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-5px);
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .post-header {
+            padding: 20px 25px 15px;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .profile-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .profile-pic:hover {
+            transform: scale(1.1);
+            border-color: #6f42c1;
+        }
+
+        .user-details h6 {
+            margin: 0;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .user-details small {
+            color: var(--secondary-color);
+            font-size: 0.85rem;
+        }
+
+        .post-content {
+            padding: 20px 25px;
+        }
+
+        .post-text {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--dark-color);
+            margin-bottom: 15px;
+        }
+
+        .post-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            transition: var(--transition);
+        }
+
+        .post-image:hover {
+            transform: scale(1.02);
+        }
+
+        .post-actions {
+            padding: 15px 25px;
+            border-top: 1px solid #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
+
+        .action-btn:hover {
+            background: rgba(78, 115, 223, 0.1);
+            color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        .action-btn.liked {
+            color: var(--like-color);
+            background: rgba(233, 30, 99, 0.1);
+        }
+
+        .action-btn.liked i {
+            animation: heartBeat 0.6s ease-in-out;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+
+        .comments-section {
+            background: #f8f9fa;
+            padding: 20px 25px;
+            border-top: 1px solid #e9ecef;
+            max-height: 0;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .comments-section.show {
+            max-height: 500px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .comment-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: var(--transition);
+            animation: fadeInLeft 0.4s ease-out;
+        }
+
+        .comment-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .comment-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .comment-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .comment-form {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .comment-input {
+            flex: 1;
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            padding: 10px 15px;
+            transition: var(--transition);
+        }
+
+        .comment-input:focus {
+            border-color: var(--comment-color);
+            outline: none;
+        }
+
+        .comment-btn {
+            background: var(--comment-color);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .comment-btn:hover {
+            background: #1976d2;
+            transform: translateY(-1px);
+        }
+
+        .delete-btn {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            opacity: 0.7;
+        }
+
+        .delete-btn:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .follow-btn {
+            background: linear-gradient(135deg, var(--success-color), #20c997);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .follow-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(28, 200, 138, 0.4);
+        }
+
+        .follow-btn.following {
+            background: linear-gradient(135deg, var(--secondary-color), #6c757d);
+        }
+        
+        /* Friend Suggestions Styles */
+        .friend-suggestions-scroll-container {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #friendSuggestions {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 10px 0;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        
+        #friendSuggestions::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+        
+        .friend-suggestion-card {
+            flex: 0 0 auto;
+            width: 120px;
+            border-radius: 10px;
+            padding: 15px 10px;
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.2s;
+            margin-right: 10px;
+        }
+        
+        .friend-suggestion-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .friend-avatar-container {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 10px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid var(--primary-color);
+        }
+        
+        .friend-avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .friend-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .like-count, .comment-count {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--secondary-color);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header Section -->
+    <div class="header-section">
+        <h2><i class="fas fa-stream"></i> Student Feed</h2>
+        <p class="mb-0">Share your thoughts and connect with classmates!</p>
+    </div>
+    
+    <!-- Section Navigation -->
+    <div class="section-nav">
+        <a href="/feed/" class="{% if request.path == '/feed/' %}active{% endif %}"><i class="fas fa-home"></i><span class="nav-label">Feed</span></a>
+        <a href="/dashboard/" class="{% if request.path == '/dashboard/' %}active{% endif %}"><i class="fas fa-chart-bar"></i><span class="nav-label">Dashboard</span></a>
+        <a href="/homework/" class="{% if request.path == '/homework/' %}active{% endif %}"><i class="fas fa-book"></i><span class="nav-label">Homework</span></a>
+        <a href="/notes/" class="{% if request.path == '/notes/' %}active{% endif %}"><i class="fas fa-file-alt"></i><span class="nav-label">Notes</span></a>
+        <a href="/profile/" class="{% if request.path == '/profile/' %}active{% endif %}"><i class="fas fa-user"></i><span class="nav-label">Profile</span></a>
+    </div>
+
+        <!-- Post Creation Form -->
+        <div class="post-form">
+            <h5 class="mb-3"><i class="fas fa-edit"></i> Create a Post</h5>
+            <form method="post" enctype="multipart/form-data" id="statusForm">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="status_text" class="form-label">What's on your mind?</label>
+                    <textarea class="form-control" id="status_text" name="status_text" rows="3" placeholder="Share something amazing..." required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="status_image" class="form-label">
+                        <i class="fas fa-image"></i> Add Image (Optional)
+                    </label>
+                    <input type="file" class="form-control" id="status_image" name="status_image" accept="image/*">
+                </div>
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i> Post
+                </button>
+            </form>
+        </div>
+        
+        <!-- Friend Search Section -->
+        <div class="card friend-search-card mb-4 mt-4">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-search"></i> Find Friends</h5>
+                <div class="input-group mb-3">
+                    <input type="text" id="friendSearchInput" class="form-control" placeholder="Search by name...">
+                    <button class="btn btn-primary" id="friendSearchBtn" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div id="friendSearchResults" class="list-group mt-2" style="max-height: 300px; overflow-y: auto;"></div>
+            </div>
+        </div>
+        
+        <!-- Friend Suggestions Section -->
+        <div class="card friend-suggestions-card mb-4">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-user-friends"></i> Friend Suggestions</h5>
+                <div class="friend-suggestions-scroll-container">
+                    <div id="friendSuggestions" class="d-flex overflow-auto pb-2">
+                        <div class="d-flex justify-content-center my-3 w-100">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Posts Feed -->
+        <div class="posts-container">
+            {% if posts %}
+                {% for post in posts %}
+                <div class="post-card" id="post-{{ post.id }}">
+                    <div class="post-header">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="user-info">
+                                <a href="{% url 'view_profile' post.user.username %}" class="text-decoration-none">
+                                    {% if post.user.profile_picture %}
+                                        <img src="{{ post.user.profile_picture.url }}" class="profile-pic" alt="Profile">
+                                    {% elif post.user.student_profile.profile_photo %}
+                                        <img src="{{ post.user.student_profile.profile_photo.url }}" class="profile-pic" alt="Profile">
+                                    {% elif post.user.teacher_profile.photo %}
+                                        <img src="{{ post.user.teacher_profile.photo.url }}" class="profile-pic" alt="Profile">
+                                    {% else %}
+                                        <div class="profile-pic bg-secondary d-flex align-items-center justify-content-center">
+                                            <i class="fas fa-user text-white"></i>
+                                        </div>
+                                    {% endif %}
+                                </a>
+                                <div class="user-details">
+                                    <h6>{{ post.user.get_full_name|default:post.user.username }}</h6>
+                                    <small>{{ post.created_at|timesince }} ago</small>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                {% if user != post.user %}
+                                <button class="follow-btn {% if user in post.user.followers.all %}following{% endif %}" 
+                                        onclick="toggleFollow('{{ post.user.username }}')" 
+                                        data-username="{{ post.user.username }}">
+                                    <i class="fas {% if user in post.user.followers.all %}fa-user-check{% else %}fa-user-plus{% endif %}"></i>
+                                    {% if user in post.user.followers.all %}Following{% else %}Follow{% endif %}
+                                </button>
+                                {% endif %}
+                                {% if user == post.user %}
+                                <button class="delete-btn" onclick="deletePost({{ post.id }})" title="Delete post">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="post-content">
+                        {% if post.text %}
+                        <p class="post-text">{{ post.text }}</p>
+                        {% endif %}
+                        {% if post.image %}
+                        <img src="{{ post.image.url }}" class="post-image" alt="Post image">
+                        {% endif %}
+                    </div>
+
+                    <div class="post-actions">
+                        <div class="action-buttons">
+                            <button class="action-btn {% if user in post.likes.all %}liked{% endif %}" 
+                                    onclick="likePost({{ post.id }})" 
+                                    data-post-id="{{ post.id }}">
+                                <i class="fas fa-heart"></i>
+                                <span class="like-count">{{ post.likes.count }}</span>
+                            </button>
+                            <button class="action-btn" onclick="showComments({{ post.id }})">
+                                <i class="fas fa-comment"></i>
+                                <span class="comment-count">{{ post.comments.count }}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="comments-section" id="comments-{{ post.id }}">
+                        <div class="comments-list">
+                            {% for comment in post.comments.all %}
+                            <div class="comment-item" id="comment-{{ comment.id }}">
+                                <div class="comment-header">
+                                    <div class="comment-user">
+                                        <a href="{% url 'view_profile' comment.user.username %}" class="text-decoration-none">
+                                            {% if comment.user.profile_picture %}
+                                                <img src="{{ comment.user.profile_picture.url }}" class="comment-pic" alt="Profile">
+                                            {% elif comment.user.student_profile.profile_photo %}
+                                                <img src="{{ comment.user.student_profile.profile_photo.url }}" class="comment-pic" alt="Profile">
+                                            {% elif comment.user.teacher_profile.photo %}
+                                                <img src="{{ comment.user.teacher_profile.photo.url }}" class="comment-pic" alt="Profile">
+                                            {% else %}
+                                                <div class="comment-pic bg-secondary d-flex align-items-center justify-content-center">
+                                                    <i class="fas fa-user text-white" style="font-size: 12px;"></i>
+                                                </div>
+                                            {% endif %}
+                                        </a>
+                                        <div>
+                                            <strong>{{ comment.user.get_full_name|default:comment.user.username }}</strong>
+                                            <br>
+                                            <small class="text-muted">{{ comment.created_at|timesince }} ago</small>
+                                        </div>
+                                    </div>
+                                    {% if user == comment.user %}
+                                    <button class="delete-btn" onclick="deleteComment({{ comment.id }})" title="Delete comment">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    {% endif %}
+                                </div>
+                                <p class="mb-0">{{ comment.text }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <form class="comment-form" onsubmit="addComment(event, {{ post.id }})">
+                            <input type="text" class="comment-input" placeholder="Write a comment..." id="comment-{{ post.id }}" required>
+                            <button type="submit" class="comment-btn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-comments pulse"></i>
+                    <h4>No posts yet!</h4>
+                    <p>Be the first to share something amazing with your classmates.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Enhanced JavaScript with modern animations and real-time updates
+        
+        // Global variables
+        let isSubmitting = false;
+        
+        // Form submission with enhanced UX
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusForm = document.getElementById('statusForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const friendSearchInput = document.getElementById('friendSearchInput');
+            const friendSearchBtn = document.getElementById('friendSearchBtn');
+            const friendSearchResults = document.getElementById('friendSearchResults');
+            const friendSuggestions = document.getElementById('friendSuggestions');
+            
+            if (statusForm) {
+                statusForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    if (isSubmitting) return;
+                    
+                    const textarea = document.getElementById('status_text');
+                    const fileInput = document.getElementById('status_image');
+                    
+                    console.log('=== DEBUG: Status form submitted ===');
+                    console.log('Text:', textarea.value);
+                    console.log('File:', fileInput.files[0]);
+                    
+                    if (!textarea.value.trim()) {
+                        showMessage('Please enter some text to post!', 'warning');
+                        return;
+                    }
+                    
+                    // Show loading state
+                    isSubmitting = true;
+                    const originalContent = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<span class="loading-spinner"></span> Posting...';
+                    submitBtn.disabled = true;
+                    
+                    // Submit form
+                    const formData = new FormData(statusForm);
+                    fetch(window.location.href, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': getCSRFToken()
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            showMessage('Post created successfully!', 'success');
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        } else {
+                            throw new Error('Failed to create post');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showMessage('Failed to create post. Please try again.', 'error');
+                    })
+                    .finally(() => {
+                        // Reset button state
+                        isSubmitting = false;
+                        submitBtn.innerHTML = originalContent;
+                        submitBtn.disabled = false;
+                    });
+                });
+            }
+            
+            // Add event listeners for friend search
+            if (friendSearchBtn) {
+                friendSearchBtn.addEventListener('click', searchFriends);
+            }
+            
+            if (friendSearchInput) {
+                friendSearchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        searchFriends();
+                    }
+                });
+            }
+            
+            // Load friend suggestions
+            fetchFriendSuggestions();
+        });
+
+        // Enhanced like functionality with animations
+        function likePost(postId) {
+            const likeBtn = document.querySelector(`[data-post-id="${postId}"]`);
+            const likeIcon = likeBtn.querySelector('i');
+            const likeCount = likeBtn.querySelector('.like-count');
+            
+            // Add immediate visual feedback
+            likeBtn.classList.add('liked');
+            likeIcon.style.animation = 'none';
+            likeIcon.offsetHeight; // Trigger reflow
+            likeIcon.style.animation = 'heartBeat 0.6s ease-in-out';
+            
+            fetch(`/api/status/${postId}/like/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    likeCount.textContent = data.likes_count;
+                    
+                    // Add floating heart animation
+                    const heart = document.createElement('div');
+                    heart.innerHTML = '❤️';
+                    heart.style.cssText = `
+                        position: absolute;
+                        font-size: 20px;
+                        pointer-events: none;
+                        animation: floatHeart 1s ease-out forwards;
+                        z-index: 1000;
+                    `;
+                    likeBtn.appendChild(heart);
+                    
+                    setTimeout(() => heart.remove(), 1000);
+                    
+                    showMessage(data.message, 'success');
+                } else {
+                    likeBtn.classList.remove('liked');
+                    showMessage('Failed to like post', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                likeBtn.classList.remove('liked');
+                showMessage('Failed to like post', 'error');
+            });
+        }
+
+        // Enhanced comment functionality
+        function showComments(postId) {
+            const commentsSection = document.getElementById(`comments-${postId}`);
+            const isVisible = commentsSection.classList.contains('show');
+            
+            if (isVisible) {
+                commentsSection.classList.remove('show');
+            } else {
+                // Hide all other comment sections first
+                document.querySelectorAll('.comments-section.show').forEach(section => {
+                    section.classList.remove('show');
+                });
+                
+                // Show this comment section with animation
+                commentsSection.classList.add('show');
+                
+                // Focus on comment input
+                setTimeout(() => {
+                    const commentInput = document.getElementById(`comment-${postId}`);
+                    if (commentInput) commentInput.focus();
+                }, 300);
+            }
+        }
+
+        function addComment(event, postId) {
+            event.preventDefault();
+            
+            const commentInput = document.getElementById(`comment-${postId}`);
+            const commentText = commentInput.value.trim();
+            
+            if (!commentText) {
+                showMessage('Please enter a comment!', 'warning');
+                return;
+            }
+            
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalContent = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="loading-spinner"></span>';
+            submitBtn.disabled = true;
+            
+            fetch(`/api/status/${postId}/comments/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: commentText })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Add new comment to DOM with animation
+                    const commentsList = document.querySelector(`#comments-${postId} .comments-list`);
+                    const newComment = createCommentElement(data.comment);
+                    commentsList.appendChild(newComment);
+                    
+                    // Update comment count
+                    const commentCount = document.querySelector(`[data-post-id="${postId}"]`).parentNode.querySelector('.comment-count');
+                    commentCount.textContent = parseInt(commentCount.textContent) + 1;
+                    
+                    // Clear input
+                    commentInput.value = '';
+                    
+                    showMessage('Comment added successfully!', 'success');
+                } else {
+                    showMessage('Failed to add comment', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('Failed to add comment', 'error');
+            })
+            .finally(() => {
+                submitBtn.innerHTML = originalContent;
+                submitBtn.disabled = false;
+            });
+        }
+
+        function createCommentElement(commentData) {
+            const commentDiv = document.createElement('div');
+            commentDiv.className = 'comment-item';
+            commentDiv.id = `comment-${commentData.id}`;
+            commentDiv.style.animation = 'fadeInLeft 0.4s ease-out';
+            
+            commentDiv.innerHTML = `
+                <div class="comment-header">
+                    <div class="comment-user">
+                        <div class="comment-pic bg-secondary d-flex align-items-center justify-content-center">
+                            <i class="fas fa-user text-white" style="font-size: 12px;"></i>
+                        </div>
+                        <div>
+                            <strong>${commentData.user_name}</strong>
+                            <br>
+                            <small class="text-muted">Just now</small>
+                        </div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteComment(${commentData.id})" title="Delete comment">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <p class="mb-0">${commentData.text}</p>
+            `;
+            
+            return commentDiv;
+        }
+
+        // Enhanced delete functionality
+        function deletePost(postId) {
+            if (!confirm('Are you sure you want to delete this post?')) return;
+            
+            const postCard = document.getElementById(`post-${postId}`);
+            postCard.style.animation = 'slideOutUp 0.3s ease-out';
+            
+            fetch(`/api/status/${postId}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    setTimeout(() => {
+                        postCard.remove();
+                        showMessage('Post deleted successfully!', 'success');
+                    }, 300);
+                } else {
+                    postCard.style.animation = '';
+                    showMessage('Failed to delete post', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                postCard.style.animation = '';
+                showMessage('Failed to delete post', 'error');
+            });
+        }
+
+        function deleteComment(commentId) {
+            if (!confirm('Are you sure you want to delete this comment?')) return;
+            
+            const commentItem = document.getElementById(`comment-${commentId}`);
+            commentItem.style.animation = 'fadeOutRight 0.3s ease-out';
+            
+            fetch(`/api/comment/${commentId}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    setTimeout(() => {
+                        commentItem.remove();
+                        showMessage('Comment deleted successfully!', 'success');
+                    }, 300);
+                } else {
+                    commentItem.style.animation = '';
+                    showMessage('Failed to delete comment', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                commentItem.style.animation = '';
+                showMessage('Failed to delete comment', 'error');
+            });
+        }
+
+        // Enhanced follow functionality
+        function toggleFollow(username) {
+            const followBtn = document.querySelector(`[data-username="${username}"]`);
+            const icon = followBtn.querySelector('i');
+            const text = followBtn.textContent.trim();
+            
+            // Add immediate visual feedback
+            followBtn.style.transform = 'scale(0.95)';
+            
+            fetch(`/api/follow/${username}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.is_following) {
+                        followBtn.classList.add('following');
+                        icon.className = 'fas fa-user-check';
+                        followBtn.innerHTML = '<i class="fas fa-user-check"></i> Following';
+                    } else {
+                        followBtn.classList.remove('following');
+                        icon.className = 'fas fa-user-plus';
+                        followBtn.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
+                    }
+                    
+                    showMessage(data.message, 'success');
+                } else {
+                    showMessage('Failed to update follow status', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('Failed to update follow status', 'error');
+            })
+            .finally(() => {
+                followBtn.style.transform = '';
+            });
+        }
+        
+        // Friend Search Functionality
+        async function searchFriends() {
+            const query = document.getElementById('friendSearchInput').value.trim();
+            if (!query) return;
+            
+            try {
+                const friendSearchResults = document.getElementById('friendSearchResults');
+                friendSearchResults.innerHTML = '<div class="d-flex justify-content-center my-3"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+                
+                const resp = await fetch(`/api/search-friends/?q=${encodeURIComponent(query)}`);
+                if (!resp.ok) throw new Error('Failed to search friends');
+                
+                const data = await resp.json();
+                renderFriendSearchResults(data);
+            } catch (e) {
+                const friendSearchResults = document.getElementById('friendSearchResults');
+                friendSearchResults.innerHTML = '<div class="list-group-item text-danger">Failed to search friends.</div>';
+            }
+        }
+
+        function renderFriendSearchResults(users) {
+            const friendSearchResults = document.getElementById('friendSearchResults');
+            friendSearchResults.innerHTML = '';
+            
+            if (!Array.isArray(users) || users.length === 0) {
+                friendSearchResults.innerHTML = '<div class="list-group-item text-center">No users found</div>';
+                return;
+            }
+            
+            users.forEach(user => {
+                const item = document.createElement('div');
+                item.className = 'list-group-item d-flex justify-content-between align-items-center';
+                
+                // Create clickable user info container
+                const userInfoLink = document.createElement('a');
+                userInfoLink.href = `/profile/${user.username}/`;
+                userInfoLink.className = 'd-flex align-items-center text-decoration-none text-dark';
+                userInfoLink.title = `View ${user.full_name || user.username}'s profile`;
+                
+                const avatar = document.createElement('img');
+                avatar.src = user.profile_photo || '/static/images/avatar-default.png';
+                avatar.className = 'rounded-circle me-2';
+                avatar.style.width = '40px';
+                avatar.style.height = '40px';
+                avatar.alt = 'User Avatar';
+                
+                const name = document.createElement('div');
+                name.textContent = user.full_name || user.username;
+                
+                userInfoLink.appendChild(avatar);
+                userInfoLink.appendChild(name);
+                
+                const followBtn = document.createElement('button');
+                followBtn.className = user.is_following ? 'btn btn-sm btn-outline-primary' : 'btn btn-sm btn-primary';
+                followBtn.textContent = user.is_following ? 'Following' : 'Follow';
+                followBtn.dataset.userId = user.id;
+                followBtn.addEventListener('click', () => toggleFollowById(user.id, followBtn));
+                
+                item.appendChild(userInfoLink);
+                item.appendChild(followBtn);
+                
+                friendSearchResults.appendChild(item);
+            });
+        }
+
+        // Friend Suggestions Functionality
+        async function fetchFriendSuggestions() {
+            try {
+                const friendSuggestions = document.getElementById('friendSuggestions');
+                const resp = await fetch('/api/friend-suggestions/');
+                if (!resp.ok) throw new Error('Failed to fetch friend suggestions');
+                
+                const data = await resp.json();
+                renderFriendSuggestions(data);
+            } catch (e) {
+                const friendSuggestions = document.getElementById('friendSuggestions');
+                friendSuggestions.innerHTML = '<div class="list-group-item text-danger">Failed to load suggestions.</div>';
+            }
+        }
+
+        function renderFriendSuggestions(users) {
+            const friendSuggestions = document.getElementById('friendSuggestions');
+            friendSuggestions.innerHTML = '';
+            
+            if (!Array.isArray(users) || users.length === 0) {
+                friendSuggestions.innerHTML = '<div class="w-100 text-center p-3">No suggestions available</div>';
+                return;
+            }
+            
+            users.forEach(user => {
+                const item = document.createElement('div');
+                item.className = 'friend-suggestion-card mx-2';
+                
+                // Create profile link container
+                const profileLink = document.createElement('a');
+                profileLink.href = `/profile/${user.username}/`;
+                profileLink.className = 'text-decoration-none';
+                profileLink.title = `View ${user.full_name || user.username}'s profile`;
+                
+                const userAvatar = document.createElement('div');
+                userAvatar.className = 'friend-avatar-container';
+                
+                const avatar = document.createElement('img');
+                avatar.src = user.profile_photo || '/static/images/avatar-default.png';
+                avatar.className = 'friend-avatar';
+                avatar.alt = 'User Avatar';
+                
+                userAvatar.appendChild(avatar);
+                profileLink.appendChild(userAvatar);
+                
+                const userInfo = document.createElement('div');
+                userInfo.className = 'friend-info';
+                
+                const name = document.createElement('div');
+                name.className = 'friend-name';
+                name.textContent = user.full_name || user.username;
+                
+                // Create name link
+                const nameLink = document.createElement('a');
+                nameLink.href = `/profile/${user.username}/`;
+                nameLink.className = 'text-decoration-none text-dark';
+                nameLink.appendChild(name);
+                
+                const followBtn = document.createElement('button');
+                followBtn.className = 'btn btn-sm btn-primary w-100 mt-2';
+                followBtn.textContent = 'Follow';
+                followBtn.dataset.userId = user.id;
+                followBtn.addEventListener('click', () => toggleFollowById(user.id, followBtn));
+                
+                userInfo.appendChild(nameLink);
+                userInfo.appendChild(followBtn);
+                
+                item.appendChild(profileLink);
+                item.appendChild(userInfo);
+                
+                friendSuggestions.appendChild(item);
+            });
+        }
+        
+        // Toggle follow/unfollow functionality for user IDs
+        async function toggleFollowById(userId, button) {
+            try {
+                const resp = await fetch('/api/toggle-follow/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify({ user_id: userId })
+                });
+                
+                if (!resp.ok) throw new Error('Failed to toggle follow status');
+                
+                const data = await resp.json();
+                
+                if (data.is_following) {
+                    button.textContent = 'Following';
+                    button.className = 'btn btn-sm btn-outline-primary';
+                } else {
+                    button.textContent = 'Follow';
+                    button.className = 'btn btn-sm btn-primary';
+                }
+                
+                showMessage(data.message, 'success');
+            } catch (e) {
+                console.error('Error toggling follow status:', e);
+                showMessage('Failed to update follow status', 'error');
+            }
+        }
+
+        // Enhanced message system
+        function showMessage(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            const bgColor = {
+                'success': 'bg-success',
+                'error': 'bg-danger',
+                'warning': 'bg-warning',
+                'info': 'bg-info'
+            }[type] || 'bg-info';
+            
+            toast.className = `toast ${bgColor} text-white p-3 rounded shadow`;
+            toast.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                    <span>${message}</span>
+                    <button type="button" class="btn-close btn-close-white ms-auto" onclick="this.parentElement.parentElement.remove()"></button>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.style.animation = 'slideOutRight 0.3s ease-out';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        // Utility functions
+        function getCSRFToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
+
+        // Add CSS for additional animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOutUp {
+                to {
+                    opacity: 0;
+                    transform: translateY(-30px);
+                }
+            }
+            
+            @keyframes fadeOutRight {
+                to {
+                    opacity: 0;
+                    transform: translateX(20px);
+                }
+            }
+            
+            @keyframes slideOutRight {
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+            
+            @keyframes floatHeart {
+                0% {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateY(-50px) scale(1.5);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+    
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+        <ul>
+            <li><a href="/feed/" class="{% if request.path == '/feed/' %}active{% endif %}"><i class="fas fa-home"></i><span class="nav-label">Feed</span></a></li>
+            <li><a href="/homework/" class="{% if request.path == '/homework/' %}active{% endif %}"><i class="fas fa-book"></i><span class="nav-label">Homework</span></a></li>
+            <li><a href="/notes/" class="{% if request.path == '/notes/' %}active{% endif %}"><i class="fas fa-file-alt"></i><span class="nav-label">Notes</span></a></li>
+            <li><a href="/dashboard/" class="{% if request.path == '/dashboard/' %}active{% endif %}"><i class="fas fa-chart-bar"></i><span class="nav-label">Dashboard</span></a></li>
+            <li><a href="/profile/" class="{% if request.path == '/profile/' %}active{% endif %}"><i class="fas fa-user"></i><span class="nav-label">Profile</span></a></li>
+        </ul>
+    </div>
+</body>
+</html>

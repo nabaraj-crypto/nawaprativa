@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_head %}
+<style>
+    body { background: #f5f6fa; }
+    .attendance-container { max-width: 900px; margin: 2rem auto; background: #fff; border-radius: 16px; box-shadow: 0 2px 16px #2F80ED22; padding: 2.5rem 2rem; }
+    h2 { color: #2F80ED; font-weight: 700; margin-bottom: 1.2rem; text-align: center; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+    th, td { padding: 0.7rem 0.4rem; border-bottom: 1px solid #eee; text-align: left; font-size: 1.04rem; }
+    th { background: #F5F6FA; color: #2F80ED; font-weight: 600; }
+    tr:last-child td { border-bottom: none; }
+    .status-radio { margin-right: 0.7em; }
+    .remarks-input { width: 90%; padding: 0.3em; border-radius: 6px; border: 1px solid #ccc; font-size: 1em; }
+    .save-btn { background: #2F80ED; color: #fff; border: none; border-radius: 8px; padding: 0.7em 2em; font-size: 1.1em; font-weight: 600; margin-top: 1.5em; cursor: pointer; transition: background 0.18s; }
+    .save-btn:hover { background: #1c5db6; }
+    .msg { text-align: center; color: #06D6A0; font-weight: 600; margin-bottom: 1em; }
+    .locked-msg { text-align: center; color: #e74c3c; font-weight: 600; margin-bottom: 1em; }
+    .form-row { display: flex; gap: 1.5em; align-items: center; margin-bottom: 1.5em; }
+    .form-row label { font-weight: 600; color: #2F80ED; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="attendance-container">
+    <h2>Mark Attendance</h2>
+    <form method="get" class="form-row" style="margin-bottom:2em;">
+        <label for="class_section">Class/Section:</label>
+        <select name="class" id="class_section" required onchange="this.form.submit()">
+            <option value="">Select Class</option>
+            {% for section in class_sections %}
+                <option value="{{ section.id }}" {% if selected_class and section.id == selected_class.id %}selected{% endif %}>{{ section.name }}</option>
+            {% endfor %}
+        </select>
+        <label for="date">Date:</label>
+        <input type="date" name="date" id="date" value="{{ selected_date|date:'Y-m-d' }}" max="{{ today|date:'Y-m-d' }}" onchange="this.form.submit()">
+    </form>
+    {% if selected_class %}
+        {% if locked %}
+            <div class="locked-msg">Attendance for this class and date is locked. Only admins can edit.</div>
+        {% endif %}
+        {% if message %}<div class="msg">{{ message }}</div>{% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="class_section" value="{{ selected_class.id }}">
+            <input type="hidden" name="date" value="{{ selected_date|date:'Y-m-d' }}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Status</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student.full_name }}</td>
+                        <td>
+                            {% for val, label in student._meta.get_field('attendances').related_model.STATUS_CHOICES %}
+                            <label class="status-radio">
+                                <input type="radio" name="status_{{ student.id }}" value="{{ val }}" {% if attendance_records|get_item:student.id and attendance_records|get_item:student.id.status == val %}checked{% endif %} {% if locked %}disabled{% endif %}> {{ label }}
+                            </label>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <input type="text" name="remarks_{{ student.id }}" class="remarks-input" value="{% if attendance_records|get_item:student.id %}{{ attendance_records|get_item:student.id.remarks }}{% endif %}" {% if locked %}readonly{% endif %}>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if not locked %}
+            <button type="submit" class="save-btn">Save Attendance</button>
+            {% endif %}
+        </form>
+    {% else %}
+        <div style="text-align:center; color:#888; margin-top:2em;">Please select a class/section to mark attendance.</div>
+    {% endif %}
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+// No extra JS needed for now
+</script>
+{% endblock %} 

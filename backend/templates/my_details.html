@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_head %}
+<style>
+  body { background: #f5f6fa; }
+  .details-container { max-width: 540px; margin: 3rem auto; background: #fff; border-radius: 22px; box-shadow: 0 8px 32px rgba(47,128,237,0.13); padding: 2.7rem 2.2rem; position: relative; overflow: hidden; }
+  .details-header { display: flex; align-items: center; gap: 1.7rem; margin-bottom: 2.2rem; }
+  .details-avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; background: #e3eafc; border: 4px solid #2F80ED22; box-shadow: 0 2px 12px #2F80ED11; }
+  .details-header h2 { margin: 0; font-size: 2.2rem; font-weight: 700; color: #2F80ED; letter-spacing: 0.5px; }
+  .details-header .role-badge { display:inline-block; background: #06D6A0; color: #fff; font-size: 0.98rem; font-weight: 600; border-radius: 6px; padding: 0.2em 0.9em; margin-top: 0.4em; letter-spacing: 0.5px; }
+  .details-header .ohw-btn { margin-top: 1em; }
+  .details-list { margin-top: 1.5rem; }
+  .details-list dt { font-weight: 700; color: #2F80ED; margin-top: 1.2em; font-size: 1.08em; letter-spacing: 0.2px; }
+  .details-list dd { margin: 0 0 0.7em 0; color: #222; font-size: 1.04em; }
+  .details-list { background: #f7faff; border-radius: 12px; padding: 1.2em 1.2em 0.5em 1.2em; box-shadow: 0 2px 8px #2F80ED0A; }
+  @media (max-width: 600px) { .details-container { padding: 1.2rem 0.5rem; } .details-header { flex-direction: column; gap: 0.7rem; } .details-avatar { width: 70px; height: 70px; } }
+</style>
+{% endblock %}
+{% block content %}
+<div class="details-container">
+  <div class="details-header">
+    <img src="{% if student and student.profile_photo %}{{ student.profile_photo.url }}{% elif teacher and teacher.photo %}{{ teacher.photo.url }}{% else %}{% static 'images/avatar-default.png' %}{% endif %}" alt="Profile Photo" class="details-avatar">
+    <div>
+      {% if student %}
+        <h2>{{ user.get_full_name|default:user.username }}</h2>
+        <div class="role-badge">Student</div>
+      {% elif teacher %}
+        <h2>{{ teacher.full_name|default:user.username }}</h2>
+        <div class="role-badge">Teacher</div>
+      {% else %}
+        <h2>{{ user.get_full_name|default:user.username }}</h2>
+      {% endif %}
+    </div>
+  </div>
+  <dl class="details-list">
+    <dt>Email</dt>
+    <dd>{{ user.email }}</dd>
+    {% if student %}
+      <dt>Full Name</dt><dd>{{ student.full_name }}</dd>
+      <dt>Class</dt><dd>{{ student.student_class }}</dd>
+      <dt>Symbol Number</dt><dd>{{ student.symbol_number }}</dd>
+      <dt>Gender</dt><dd>{{ student.gender }}</dd>
+      <dt>Date of Birth</dt><dd>{{ student.date_of_birth }}</dd>
+      <dt>Parent Name</dt><dd>{{ student.parent_name }}</dd>
+      <dt>Parent Contact</dt><dd>{{ student.parent_contact }}</dd>
+      <dt>Phone Number</dt><dd>{{ student.phone_number }}</dd>
+      <dt>Address</dt><dd>{{ student.address }}</dd>
+    {% elif teacher %}
+      <dt>Full Name</dt><dd>{{ teacher.full_name }}</dd>
+      <dt>Subject</dt><dd>{{ teacher.subject }}</dd>
+      <dt>School Name</dt><dd>{{ teacher.school_name }}</dd>
+      <dt>Position</dt><dd>{{ teacher.position }}</dd>
+      <dt>Custom Position</dt><dd>{{ teacher.custom_position }}</dd>
+      <dt>Experience</dt><dd>{{ teacher.experience }}</dd>
+      <dt>Education</dt><dd>{{ teacher.education }}</dd>
+      <dt>Contact Number</dt><dd>{{ teacher.contact_number }}</dd>
+      <dt>Blood Group</dt><dd>{{ teacher.blood_group }}</dd>
+      <dt>Address</dt><dd>{{ teacher.address }}</dd>
+    {% endif %}
+  </dl>
+</div>
+{% endblock %} 

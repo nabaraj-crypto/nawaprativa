@@ -1,0 +1,203 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Online Homework System</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+      body { font-family: 'Inter', 'Poppins', Arial, sans-serif; background: linear-gradient(120deg, #f5f6fa 60%, #e0ecff 100%); margin: 0; }
+      .profile-container { max-width: 540px; margin: 3rem auto; background: #fff; border-radius: 22px; box-shadow: 0 8px 32px rgba(47,128,237,0.13); padding: 2.7rem 2.2rem; position: relative; overflow: hidden; margin-top: 70px; }
+      .profile-header { display: flex; align-items: center; gap: 1.7rem; margin-bottom: 2.2rem; }
+      .profile-avatar { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; background: #e3eafc; border: 4px solid #2F80ED22; box-shadow: 0 2px 12px #2F80ED11; }
+      .profile-header h2 { margin: 0; font-size: 2.2rem; font-weight: 700; color: #2F80ED; letter-spacing: 0.5px; }
+      .profile-header .role-badge { display:inline-block; background: #06D6A0; color: #fff; font-size: 0.98rem; font-weight: 600; border-radius: 6px; padding: 0.2em 0.9em; margin-top: 0.4em; letter-spacing: 0.5px; }
+      .profile-header .ohw-btn { margin-top: 1em; }
+      .profile-details { margin-top: 1.5rem; }
+      .profile-details dt { font-weight: 700; color: #2F80ED; margin-top: 1.2em; font-size: 1.08em; letter-spacing: 0.2px; }
+      .profile-details dd { margin: 0 0 0.7em 0; color: #222; font-size: 1.04em; }
+      .profile-details { background: #f7faff; border-radius: 12px; padding: 1.2em 1.2em 0.5em 1.2em; box-shadow: 0 2px 8px #2F80ED0A; }
+      .ohw-btn, .ohw-btn-primary { display:inline-block; border:none; border-radius:8px; padding:0.7em 1.7em; font-size:1.08em; font-weight:600; background:#2F80ED; color:#fff; cursor:pointer; transition:background 0.18s, box-shadow 0.18s; box-shadow:0 2px 8px #2F80ED22; text-decoration:none; }
+      .ohw-btn:hover, .ohw-btn-primary:hover { background:#1c5db6; color:#fff; }
+      .ohw-btn[style*='background:#eee'] { background:#eee !important; color:#2F80ED !important; box-shadow:none; }
+      @media (max-width: 600px) { .profile-container { padding: 1.2rem 0.5rem; } .profile-header { flex-direction: column; gap: 0.7rem; } .profile-avatar { width: 100px; height: 100px; } }
+      .bottom-nav a.active {
+        color: #1c5db6;
+        position: relative;
+      }
+      .bottom-nav a.active::after {
+        content: '';
+        display: block;
+        margin: 0 auto;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #1c5db6;
+        margin-top: 2px;
+      }
+      .section-nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 2.5em;
+        background: #fff;
+        border-bottom: 1.5px solid #e3eafc;
+        box-shadow: 0 2px 12px #2F80ED11;
+        padding: 0.5em 0 0.2em 0;
+        font-size: 1.13em;
+        z-index: 1050;
+        position: fixed;
+        top: 56px;
+        left: 0;
+        width: 100vw;
+      }
+      .section-nav a {
+        color: #2F80ED;
+        text-decoration: none;
+        font-weight: 600;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0.2em 0.7em;
+        border-radius: 8px 8px 0 0;
+        transition: background 0.18s, color 0.18s;
+        position: relative;
+      }
+      .section-nav a.active, .section-nav a:focus {
+        color: #1c5db6;
+        background: #e3eafc;
+      }
+      .section-nav a.active::after {
+        content: '';
+        display: block;
+        margin: 0 auto;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #1c5db6;
+        margin-top: 2px;
+      }
+      .section-nav .nav-label {
+        font-size: 0.92em;
+        margin-top: 0.1em;
+      }
+      @media (max-width: 900px) {
+        .section-nav { display: none; }
+        .profile-container { margin-top: 0; }
+      }
+    </style>
+</head>
+<body>
+    <!-- Bootstrap Navbar Start -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+      <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="/">NawaPrativa</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="/gallery/">Gallery</a></li>
+            <li class="nav-item"><a class="nav-link" href="/faculty/">Faculty</a></li>
+            <li class="nav-item"><a class="nav-link" href="/about/">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="/contact/">Contact</a></li>
+            <li class="nav-item"><a class="nav-link" href="/notices/">Notices</a></li>
+            <li class="nav-item"><a class="nav-link" href="/results/">Results</a></li>
+            <li class="nav-item"><a class="nav-link active" href="/profile/">Profile</a></li>
+            {% if user.is_authenticated %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="{% if user.student_profile and user.student_profile.profile_photo %}{{ user.student_profile.profile_photo.url }}{% elif user.teacher_profile and user.teacher_profile.photo %}{{ user.teacher_profile.photo.url }}{% else %}{% static 'images/avatar-default.png' %}{% endif %}" alt="avatar" style="width:32px;height:32px;border-radius:50%;object-fit:cover;margin-right:0.5em;">
+                {{ user.get_full_name|default:user.username }}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
+                <li><h6 class="dropdown-header">Signed in as<br><span class="fw-bold">{{ user.get_full_name|default:user.username }}</span></h6></li>
+                <li><a class="dropdown-item" href="/dashboard/">Dashboard</a></li>
+                <li><a class="dropdown-item" href="/profile/">Profile</a></li>
+                <li><a class="dropdown-item" href="/my-details/">My Details</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="/logout/">Logout</a></li>
+              </ul>
+            </li>
+            {% else %}
+            <li class="nav-item"><a class="nav-link" href="/login/">Login</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'student_signup_page' %}">Sign Up</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Bootstrap Navbar End -->
+  <div class="profile-container">
+    {% if not student and not teacher %}
+      <div style="text-align:center; margin:2em 0;">
+        <h2 style="font-size:1.5em; color:#2F80ED;">Please log in or sign up to view your profile</h2>
+        <a href="/login/" class="ohw-btn ohw-btn-primary" style="margin:0.5em;">Login</a>
+        <a href="/student-signup/" class="ohw-btn" style="background:#eee;color:#2F80ED;margin:0.5em;">Sign Up</a>
+      </div>
+    {% else %}
+    <div class="profile-header">
+      <img src="{% if student and student.profile_photo %}{{ student.profile_photo.url }}{% elif teacher and teacher.photo %}{{ teacher.photo.url }}{% else %}{% static 'images/gallery/schoolslogo.jpg' %}{% endif %}" alt="Profile Photo" class="profile-avatar">
+      <div>
+        {% if student %}
+          <h2>{{ user.get_full_name|default:user.username }}</h2>
+          <div class="role-badge">Student</div>
+          <a href="{% url 'profile_edit' %}" class="ohw-btn ohw-btn-primary">Edit Profile</a>
+        {% elif teacher %}
+          <h2>{{ teacher.full_name|default:teacher.username }}</h2>
+          <div class="role-badge">Teacher</div>
+        {% endif %}
+      </div>
+    </div>
+    <dl class="profile-details">
+      <dt>Email</dt>
+      <dd>{% if student %}{{ user.email }}{% elif teacher %}{{ teacher.contact_number }}{% endif %}</dd>
+      {% if student %}
+        <dt>Full Name</dt><dd>{{ student.full_name }}</dd>
+        <dt>Class</dt><dd>{{ student.student_class }}</dd>
+        <dt>Symbol Number</dt><dd>{{ student.symbol_number }}</dd>
+        <dt>Gender</dt><dd>{{ student.gender }}</dd>
+        <dt>Date of Birth</dt><dd>{{ student.date_of_birth }}</dd>
+        <dt>Parent Name</dt><dd>{{ student.parent_name }}</dd>
+        <dt>Parent Contact</dt><dd>{{ student.parent_contact }}</dd>
+        <dt>Phone Number</dt><dd>{{ student.phone_number }}</dd>
+        <dt>Address</dt><dd>{{ student.address }}</dd>
+      {% elif teacher %}
+        <dt>Full Name</dt><dd>{{ teacher.full_name }}</dd>
+        <dt>Subject</dt><dd>{{ teacher.subject }}</dd>
+        <dt>School Name</dt><dd>{{ teacher.school_name }}</dd>
+        <dt>Position</dt><dd>{{ teacher.position }}</dd>
+        <dt>Custom Position</dt><dd>{{ teacher.custom_position }}</dd>
+        <dt>Experience</dt><dd>{{ teacher.experience }}</dd>
+        <dt>Education</dt><dd>{{ teacher.education }}</dd>
+        <dt>Contact Number</dt><dd>{{ teacher.contact_number }}</dd>
+        <dt>Blood Group</dt><dd>{{ teacher.blood_group }}</dd>
+        <dt>Address</dt><dd>{{ teacher.address }}</dd>
+      {% endif %}
+    </dl>
+    {% endif %}
+  </div>
+  <div class="section-nav">
+    <a href="/feed/" class="{% if request.path == '/feed/' %}active{% endif %}"><i class="fas fa-home"></i><span class="nav-label">Feed</span></a>
+    <a href="/dashboard/" class="{% if request.path == '/dashboard/' %}active{% endif %}"><i class="fas fa-chart-bar"></i><span class="nav-label">Dashboard</span></a>
+    <a href="/homework/" class="{% if request.path == '/homework/' %}active{% endif %}"><i class="fas fa-book"></i><span class="nav-label">Homework</span></a>
+    <a href="/notes/" class="{% if request.path == '/notes/' %}active{% endif %}"><i class="fas fa-file-alt"></i><span class="nav-label">Notes</span></a>
+    <a href="/profile/" class="{% if request.path == '/profile/' %}active{% endif %}"><i class="fas fa-user"></i><span class="nav-label">Profile</span></a>
+  </div>
+  <div class="bottom-nav">
+  <ul>
+    <li><a href="/feed/" class="{% if request.path == '/feed/' %}active{% endif %}"><i class="fas fa-home"></i><span class="nav-label">Feed</span></a></li>
+    <li><a href="/homework/" class="{% if request.path == '/homework/' %}active{% endif %}"><i class="fas fa-book"></i><span class="nav-label">Homework</span></a></li>
+    <li><a href="/notes/" class="{% if request.path == '/notes/' %}active{% endif %}"><i class="fas fa-file-alt"></i><span class="nav-label">Notes</span></a></li>
+    <li><a href="/dashboard/" class="{% if request.path == '/dashboard/' %}active{% endif %}"><i class="fas fa-chart-bar"></i><span class="nav-label">Dashboard</span></a></li>
+    <li><a href="/profile/" class="{% if request.path == '/profile/' %}active{% endif %}"><i class="fas fa-user"></i><span class="nav-label">Profile</span></a></li>
+  </ul>
+</div>
+  <script src="{% static 'js/main.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

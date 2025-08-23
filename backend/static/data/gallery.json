@@ -1,0 +1,166 @@
+{
+    "gallery": [
+        {
+            "id": 1,
+            "title": "Annual Sports Day",
+            "description": "Students participating in various sports activities during the annual sports day celebration",
+            "longDescription": "The Annual Sports Day at Nawa Prativa Secondary School was a grand celebration of athleticism and team spirit. Students from all grades participated in various track and field events, team sports, and cultural performances. The event featured exciting competitions in athletics, football, basketball, and traditional Nepali games. Parents and teachers actively participated in supporting and cheering for the students.",
+            "image": "images/gallery/annualday.jpg",
+            "category": "events",
+            "date": "2024-02-15",
+            "location": "School Sports Ground",
+            "participants": "All Students and Staff",
+            "highlights": [
+                "Track and Field Events",
+                "Team Sports Competitions",
+                "Cultural Performances",
+                "Award Ceremony"
+            ],
+            "tags": ["sports", "annual event", "competition", "celebration"]
+        },
+        {
+            "id": 2,
+            "title": "Science Exhibition",
+            "description": "Students showcasing their innovative science projects at the annual science exhibition",
+            "longDescription": "The Annual Science Exhibition showcased the innovative and creative projects developed by our students. The event featured projects ranging from renewable energy solutions to robotics and environmental conservation. Students demonstrated their understanding of scientific principles through practical applications and interactive displays. The exhibition was judged by a panel of experts from local universities and research institutions.",
+            "image": "images/gallery/scienceexhibition.jpeg",
+            "category": "events",
+            "date": "2024-01-20",
+            "location": "School Science Lab and Auditorium",
+            "participants": "Science Students (Grades 6-12)",
+            "highlights": [
+                "Innovative Science Projects",
+                "Interactive Demonstrations",
+                "Expert Judging Panel",
+                "Student Presentations"
+            ],
+            "tags": ["science", "innovation", "exhibition", "projects"]
+        },
+        {
+            "id": 3,
+            "title": "Cultural Program",
+            "description": "Students performing traditional dances during the cultural program",
+            "longDescription": "The Cultural Program celebrated the rich diversity of Nepali culture through music, dance, and drama performances. Students showcased various traditional dance forms, musical performances, and theatrical presentations. The event included performances of classical Nepali dances, folk music, and contemporary cultural fusion pieces. The program was attended by parents, community members, and cultural experts.",
+            "image": "images/gallery/culturalprogram.jpg",
+            "category": "events",
+            "date": "2024-03-10",
+            "location": "School Auditorium",
+            "participants": "Cultural Club Members and Interested Students",
+            "highlights": [
+                "Traditional Dance Performances",
+                "Musical Performances",
+                "Cultural Drama",
+                "Folk Art Exhibition"
+            ],
+            "tags": ["culture", "performing arts", "tradition", "celebration"]
+        },
+        {
+            "id": 4,
+            "title": "Art Exhibition",
+            "description": "Students' artwork displayed during the annual art exhibition",
+            "longDescription": "The Annual Art Exhibition displayed the creative talents of our students through various forms of visual art. The exhibition featured paintings, sculptures, digital art, and mixed media installations. Students from all grades participated, showcasing their artistic skills and creative expression. The event included live art demonstrations and interactive workshops conducted by professional artists.",
+            "image": "images/gallery/artexhibition.jpeg",
+            "category": "events",
+            "date": "2024-02-28",
+            "location": "School Art Gallery and Multipurpose Hall",
+            "participants": "Art Students and Art Club Members",
+            "highlights": [
+                "Student Artwork Display",
+                "Live Art Demonstrations",
+                "Interactive Workshops",
+                "Art Competition"
+            ],
+            "tags": ["art", "exhibition", "creativity", "visual arts"]
+        },
+        {
+            "id": 5,
+            "title": "Sports Meet",
+            "description": "Annual sports meet showcasing athletic talents of our students",
+            "longDescription": "The Annual Sports Meet was a competitive event featuring various athletic disciplines. Students competed in track events, field events, and team sports. The meet included both individual and team competitions, with students representing their respective houses. The event was marked by excellent sportsmanship and record-breaking performances.",
+            "image": "images/gallery/sportsmeet.jpg",
+            "category": "events",
+            "date": "2024-02-01",
+            "location": "School Sports Complex",
+            "participants": "All Students (House-wise Teams)",
+            "highlights": [
+                "Track and Field Events",
+                "Team Sports Finals",
+                "House Competitions",
+                "Award Ceremony"
+            ],
+            "tags": ["sports", "competition", "athletics", "team sports"]
+        },
+        {
+            "id": 6,
+            "title": "Class Picnic 2024",
+            "description": "Students enjoying their annual class picnic",
+            "longDescription": "The Annual Class Picnic was a day of fun and bonding for students and teachers. The event included various outdoor activities, team games, and cultural performances. Students enjoyed nature walks, group activities, and a special lunch prepared by the school. The picnic provided an opportunity for students to relax and build stronger relationships with their peers and teachers.",
+            "image": "images/gallery/class-picnic-2024.jpg",
+            "category": "events",
+            "date": "2024-03-15",
+            "location": "Local Nature Park",
+            "participants": "All Students and Teachers",
+            "highlights": [
+                "Outdoor Activities",
+                "Team Building Games",
+                "Cultural Performances",
+                "Group Lunch"
+            ],
+            "tags": ["picnic", "outdoor", "recreation", "team building"]
+        },
+        {
+            "id": 7,
+            "title": "Environment Day",
+            "description": "Students participating in environment day activities",
+            "longDescription": "Environment Day was celebrated with various activities focused on environmental conservation and awareness. Students participated in tree plantation, clean-up drives, and awareness campaigns. The event included workshops on sustainable practices and environmental protection. Students created art installations using recycled materials and presented projects on environmental issues.",
+            "image": "images/gallery/environmentday.jpeg",
+            "category": "events",
+            "date": "2024-03-20",
+            "location": "School Campus and Surrounding Areas",
+            "participants": "Eco Club Members and All Students",
+            "highlights": [
+                "Tree Plantation Drive",
+                "Clean-up Campaign",
+                "Environmental Workshops",
+                "Recycled Art Exhibition"
+            ],
+            "tags": ["environment", "conservation", "awareness", "sustainability"]
+        },
+        {
+            "id": 8,
+            "title": "Math Olympiad",
+            "description": "Students competing in the annual math olympiad",
+            "longDescription": "The Annual Math Olympiad challenged students' mathematical skills and problem-solving abilities. The competition included various rounds testing different aspects of mathematics, from basic arithmetic to advanced problem-solving. Students participated in both individual and team events, showcasing their mathematical prowess and logical thinking skills.",
+            "image": "images/gallery/matholympad.jpeg",
+            "category": "events",
+            "date": "2024-02-10",
+            "location": "School Mathematics Lab",
+            "participants": "Mathematics Students (Grades 8-12)",
+            "highlights": [
+                "Individual Competitions",
+                "Team Challenges",
+                "Problem-solving Rounds",
+                "Award Ceremony"
+            ],
+            "tags": ["mathematics", "competition", "olympiad", "academic"]
+        },
+        {
+            "id": 9,
+            "title": "Graduation Day",
+            "description": "Celebrating the achievements of our graduating students",
+            "longDescription": "Graduation Day marked the successful completion of secondary education for our graduating students. The ceremony included the presentation of certificates, awards for academic excellence, and special recognition for outstanding achievements. Graduating students shared their experiences and future aspirations. The event was attended by parents, teachers, and distinguished guests from the education sector.",
+            "image": "images/gallery/graduationday.webp",
+            "category": "events",
+            "date": "2024-03-25",
+            "location": "School Auditorium",
+            "participants": "Graduating Students, Parents, and Staff",
+            "highlights": [
+                "Certificate Distribution",
+                "Award Ceremony",
+                "Student Speeches",
+                "Cultural Program"
+            ],
+            "tags": ["graduation", "celebration", "achievement", "ceremony"]
+        }
+    ]
+} 

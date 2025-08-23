@@ -1,0 +1,1406 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Teacher Dashboard - Nawa Prativa{% endblock %}
+
+{% block extra_head %}
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #858796;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --light-color: #f8f9fc;
+            --dark-color: #5a5c69;
+            --like-color: #e91e63;
+            --comment-color: #2196f3;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .dashboard-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin: 20px auto;
+            max-width: 1200px;
+            overflow: hidden;
+        }
+
+        .header-section {
+            background: linear-gradient(135deg, var(--primary-color), #6f42c1);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: none;
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .dashboard-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-3px);
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, var(--primary-color), #6f42c1);
+            color: white;
+            text-align: center;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(78, 115, 223, 0.3);
+        }
+
+        .stats-card h4 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .nav-pills .nav-link {
+            border-radius: 25px;
+            padding: 12px 25px;
+            margin: 0 5px;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .nav-pills .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color), #6f42c1);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .nav-pills .nav-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .post-form {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: var(--transition);
+        }
+
+        .post-form:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            transition: var(--transition);
+            font-size: 16px;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+            transform: scale(1.02);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), #6f42c1);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(78, 115, 223, 0.4);
+        }
+
+        .post-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: var(--transition);
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        .post-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-5px);
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .post-header {
+            padding: 20px 25px 15px;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .profile-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .profile-pic:hover {
+            transform: scale(1.1);
+            border-color: #6f42c1;
+        }
+
+        .user-details h6 {
+            margin: 0;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .user-details small {
+            color: var(--secondary-color);
+            font-size: 0.85rem;
+        }
+
+        .post-content {
+            padding: 20px 25px;
+        }
+
+        .post-text {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--dark-color);
+            margin-bottom: 15px;
+        }
+
+        .post-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            transition: var(--transition);
+        }
+
+        .post-image:hover {
+            transform: scale(1.02);
+        }
+
+        .post-actions {
+            padding: 15px 25px;
+            border-top: 1px solid #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
+
+        .action-btn:hover {
+            background: rgba(78, 115, 223, 0.1);
+            color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        .action-btn.liked {
+            color: var(--like-color);
+            background: rgba(233, 30, 99, 0.1);
+        }
+
+        .action-btn.liked i {
+            animation: heartBeat 0.6s ease-in-out;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+
+        .comments-section {
+            background: #f8f9fa;
+            padding: 20px 25px;
+            border-top: 1px solid #e9ecef;
+            max-height: 0;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .comments-section.show {
+            max-height: 500px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .comment-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: var(--transition);
+            animation: fadeInLeft 0.4s ease-out;
+        }
+
+        .comment-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .comment-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .comment-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .comment-form {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .comment-input {
+            flex: 1;
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            padding: 10px 15px;
+            transition: var(--transition);
+        }
+
+        .comment-input:focus {
+            border-color: var(--comment-color);
+            outline: none;
+        }
+
+        .comment-btn {
+            background: var(--comment-color);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .comment-btn:hover {
+            background: #1976d2;
+            transform: translateY(-1px);
+        }
+
+        .delete-btn {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            opacity: 0.7;
+        }
+
+        .delete-btn:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .follow-btn {
+            background: linear-gradient(135deg, var(--success-color), #20c997);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .follow-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(28, 200, 138, 0.4);
+        }
+
+        .follow-btn.following {
+            background: linear-gradient(135deg, var(--secondary-color), #6c757d);
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .like-count, .comment-count {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--secondary-color);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .homework-card {
+            background: linear-gradient(135deg, var(--success-color), #20c997);
+            color: white;
+        }
+
+        .posts-card {
+            background: linear-gradient(135deg, var(--info-color), #17a2b8);
+            color: white;
+        }
+
+        .attendance-card {
+            background: linear-gradient(135deg, var(--warning-color), #ffc107);
+            color: white;
+        }
+
+        .students-card {
+            background: linear-gradient(135deg, var(--danger-color), #dc3545);
+            color: white;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Welcome Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card dashboard-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        {% if user.teacher_profile.photo %}
+                            <img src="{{ user.teacher_profile.photo.url }}" class="rounded-circle me-3" width="80" height="80" alt="Profile" style="object-fit: cover;">
+                        {% else %}
+                            <div class="bg-secondary rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                <i class="fas fa-user text-white fa-2x"></i>
+        </div>
+                        {% endif %}
+            <div>
+                            <h2 class="mb-1">Welcome back, {{ user.get_full_name|default:user.username }}!</h2>
+                            <p class="text-muted mb-0">{{ user.teacher_profile.position|default:"Teacher" }} • {{ user.teacher_profile.subject|default:"Subject" }}</p>
+                            <small class="text-muted">Last login: {{ user.last_login|timesince }} ago</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card dashboard-card stats-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-2x mb-2"></i>
+                    <h4 class="mb-1">{{ total_students|default:0 }}</h4>
+                    <p class="mb-0">Total Students</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card dashboard-card homework-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-book fa-2x mb-2"></i>
+                    <h4 class="mb-1">{{ total_homeworks|default:0 }}</h4>
+                    <p class="mb-0">Homeworks</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card dashboard-card posts-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-comments fa-2x mb-2"></i>
+                    <h4 class="mb-1">{{ total_posts|default:0 }}</h4>
+                    <p class="mb-0">Posts</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card dashboard-card attendance-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-check fa-2x mb-2"></i>
+                    <h4 class="mb-1">{{ attendance_today|default:0 }}</h4>
+                    <p class="mb-0">Present Today</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Pills -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <ul class="nav nav-pills justify-content-center" id="dashboardTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="posts-tab" data-bs-toggle="pill" data-bs-target="#posts" type="button" role="tab">
+                        <i class="fas fa-comments"></i> Posts & Feed
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="homework-tab" data-bs-toggle="pill" data-bs-target="#homework" type="button" role="tab">
+                        <i class="fas fa-book"></i> Homework
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="attendance-tab" data-bs-toggle="pill" data-bs-target="#attendance" type="button" role="tab">
+                        <i class="fas fa-calendar-check"></i> Attendance
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="students-tab" data-bs-toggle="pill" data-bs-target="#students" type="button" role="tab">
+                        <i class="fas fa-users"></i> Students
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="dashboardTabContent">
+        <!-- Posts Tab -->
+        <div class="tab-pane fade show active" id="posts" role="tabpanel">
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <!-- Create Post Form -->
+                    <div class="post-form">
+                        <h5 class="mb-3"><i class="fas fa-edit"></i> Create a Post</h5>
+                        <form method="post" enctype="multipart/form-data" id="teacherPostForm">
+                            {% csrf_token %}
+                            <input type="hidden" name="form_type" value="post">
+                            <div class="mb-3">
+                                <label for="status_text" class="form-label">Share something with your students...</label>
+                                <textarea class="form-control" id="status_text" name="status_text" rows="3" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="status_image" class="form-label">Add Image (Optional)</label>
+                                <input type="file" class="form-control" id="status_image" name="status_image" accept="image/*">
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Post
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Posts Feed -->
+                    <div class="posts-container">
+                        {% if posts %}
+                            {% for post in posts %}
+                            <div class="card mb-3 dashboard-card" id="post-{{ post.id }}">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <div class="flex-shrink-0">
+                                            {% if post.user.profile_picture %}
+                                                <img src="{{ post.user.profile_picture.url }}" class="rounded-circle me-2" width="40" height="40" alt="Profile" style="object-fit: cover;">
+                                            {% elif post.user.student_profile.profile_photo %}
+                                                <img src="{{ post.user.student_profile.profile_photo.url }}" class="rounded-circle me-2" width="40" height="40" alt="Profile" style="object-fit: cover;">
+                                            {% elif post.user.teacher_profile.photo %}
+                                                <img src="{{ post.user.teacher_profile.photo.url }}" class="rounded-circle me-2" width="40" height="40" alt="Profile" style="object-fit: cover;">
+                                            {% else %}
+                                                <div class="bg-secondary rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                    <i class="fas fa-user text-white"></i>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex align-items-center">
+                                                <a href="{% url 'view_profile' post.user.username %}" class="text-decoration-none">
+                                                    <h6 class="mb-0 text-dark">{{ post.user.get_full_name|default:post.user.username }}</h6>
+                                                </a>
+                                                {% if user.is_authenticated and user != post.user %}
+                                                    <button class="btn btn-sm btn-outline-primary ms-2" onclick="toggleFollow('{{ post.user.username }}')" data-username="{{ post.user.username }}">
+                                                        {% if user in post.user.followers.all %}
+                                                            <i class="fas fa-user-minus"></i> Unfollow
+                                                        {% else %}
+                                                            <i class="fas fa-user-plus"></i> Follow
+                                                        {% endif %}
+                                                    </button>
+                                                {% endif %}
+                                            </div>
+                                            <small class="text-muted">{{ post.created_at|timesince }} ago</small>
+                                        </div>
+                                        <!-- Delete button for post creator -->
+                                        {% if user == post.user %}
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-ellipsis-h"></i>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item text-danger" href="#" onclick="deletePost({{ post.id }})">
+                                                    <i class="fas fa-trash"></i> Delete Post
+                                                </a></li>
+                                            </ul>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    {% if post.text %}
+                                        <p class="card-text">{{ post.text }}</p>
+                                    {% endif %}
+                                    
+                                    {% if post.image %}
+                                        <img src="{{ post.image.url }}" class="img-fluid rounded mb-2" alt="Post image">
+                                    {% endif %}
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="likePost({{ post.id }})" data-post-id="{{ post.id }}">
+                                                <i class="fas fa-thumbs-up"></i> Like
+                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="showComments({{ post.id }})">
+                                                <i class="fas fa-comment"></i> Comment
+                                            </button>
+                                        </div>
+                                        <small class="text-muted">{{ post.likes.count }} likes</small>
+                                    </div>
+                                    
+                                    <!-- Comments Section -->
+                                    <div id="comments-{{ post.id }}" class="mt-3" style="display: none;">
+                                        <hr>
+                                        <div class="comments-list">
+                                            {% for comment in post.comments.all %}
+                                            <div class="d-flex mb-2" id="comment-{{ comment.id }}">
+                                                <div class="flex-shrink-0">
+                                                    {% if comment.user.profile_picture %}
+                                                        <img src="{{ comment.user.profile_picture.url }}" class="rounded-circle" width="30" height="30" alt="Profile" style="object-fit: cover;">
+                                                    {% elif comment.user.student_profile.profile_photo %}
+                                                        <img src="{{ comment.user.student_profile.profile_photo.url }}" class="rounded-circle" width="30" height="30" alt="Profile" style="object-fit: cover;">
+                                                    {% elif comment.user.teacher_profile.photo %}
+                                                        <img src="{{ comment.user.teacher_profile.photo.url }}" class="rounded-circle" width="30" height="30" alt="Profile" style="object-fit: cover;">
+                                                    {% else %}
+                                                        <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+                                                            <i class="fas fa-user text-white" style="font-size: 12px;"></i>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="flex-grow-1 ms-2">
+                                                    <div class="bg-light rounded p-2">
+                                                        <div class="d-flex justify-content-between align-items-start">
+                                                            <div>
+                                                                <a href="{% url 'view_profile' comment.user.username %}" class="text-decoration-none">
+                                                                    <strong class="text-dark">{{ comment.user.get_full_name|default:comment.user.username }}</strong>
+                                                                </a>
+                                                                <p class="mb-0">{{ comment.text }}</p>
+                                                                <small class="text-muted">{{ comment.created_at|timesince }} ago</small>
+                                                            </div>
+                                                            <!-- Delete button for comment creator -->
+                                                            {% if user == comment.user %}
+                                                            <button class="btn btn-sm btn-outline-danger ms-2" onclick="deleteComment({{ comment.id }})" title="Delete comment">
+                                                                <i class="fas fa-times"></i>
+                                                            </button>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                        <form class="mt-2" onsubmit="addComment(event, {{ post.id }})">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" placeholder="Write a comment..." id="comment-{{ post.id }}">
+                                                <button class="btn btn-outline-primary" type="submit">Post</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">No posts yet</h5>
+                                <p class="text-muted">Be the first to share something!</p>
+            </div>
+                        {% endif %}
+            </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Homework Tab -->
+        <div class="tab-pane fade" id="homework" role="tabpanel">
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <!-- Create Homework Form -->
+                    <div class="card dashboard-card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-plus"></i> Create New Homework</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" enctype="multipart/form-data" id="homeworkForm">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="homework">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="title" class="form-label">Title</label>
+                                        <input type="text" class="form-control" id="title" name="title" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="assigned_class" class="form-label">Class</label>
+                                        <select class="form-control" id="assigned_class" name="assigned_class" required>
+                                            <option value="">Select Class</option>
+                                            <option value="Class 1">Class 1</option>
+                                            <option value="Class 2">Class 2</option>
+                                            <option value="Class 3">Class 3</option>
+                                            <option value="Class 4">Class 4</option>
+                                            <option value="Class 5">Class 5</option>
+                                            <option value="Class 6">Class 6</option>
+                                            <option value="Class 7">Class 7</option>
+                                            <option value="Class 8">Class 8</option>
+                                            <option value="Class 9">Class 9</option>
+                                            <option value="Class 10">Class 10</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="due_date" class="form-label">Due Date</label>
+                                        <input type="date" class="form-control" id="due_date" name="due_date" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="file" class="form-label">Attachment (Optional)</label>
+                                        <input type="file" class="form-control" id="file" name="file">
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Create Homework
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Homework List -->
+                    <div class="card dashboard-card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-list"></i> Recent Homeworks</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if homeworks %}
+                                {% for homework in homeworks %}
+                                <div class="homework-item">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1">{{ homework.title }}</h6>
+                                            <p class="mb-1 text-muted">{{ homework.description|truncatewords:20 }}</p>
+                                            <small class="text-muted">
+                                                <i class="fas fa-users"></i> {{ homework.assigned_class }} • 
+                                                <i class="fas fa-calendar"></i> Due: {{ homework.due_date|date:"M d, Y" }}
+                                            </small>
+                                        </div>
+                                        <div class="btn-group">
+                                            <a href="{% url 'view_submissions' homework.id %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i> View Submissions
+                                            </a>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="deleteHomework({{ homework.id }})">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                        {% endfor %}
+                    {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">No homeworks yet</h5>
+                                    <p class="text-muted">Create your first homework assignment!</p>
+                                </div>
+                    {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance Tab -->
+        <div class="tab-pane fade" id="attendance" role="tabpanel">
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <div class="card dashboard-card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-calendar-check"></i> Attendance Management</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="attendance_class" class="form-label">Select Class</label>
+                                    <select class="form-control" id="attendance_class">
+                                        <option value="">Choose Class</option>
+                                        <option value="Class 1">Class 1</option>
+                                        <option value="Class 2">Class 2</option>
+                                        <option value="Class 3">Class 3</option>
+                                        <option value="Class 4">Class 4</option>
+                                        <option value="Class 5">Class 5</option>
+                                        <option value="Class 6">Class 6</option>
+                                        <option value="Class 7">Class 7</option>
+                                        <option value="Class 8">Class 8</option>
+                                        <option value="Class 9">Class 9</option>
+                                        <option value="Class 10">Class 10</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="attendance_date" class="form-label">Date</label>
+                                    <input type="date" class="form-control" id="attendance_date" value="{{ today|date:'Y-m-d' }}">
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="loadAttendance()">
+                                <i class="fas fa-search"></i> Load Students
+                            </button>
+                            
+                            <div id="attendance-list" class="mt-4" style="display: none;">
+                                <!-- Attendance list will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students Tab -->
+        <div class="tab-pane fade" id="students" role="tabpanel">
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <div class="card dashboard-card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-users"></i> My Students</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if students %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Photo</th>
+                                                <th>Name</th>
+                                                <th>Class</th>
+                                                <th>Roll Number</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for student in students %}
+                                            <tr>
+                                                <td>
+                                                    {% if student.profile_photo %}
+                                                        <img src="{{ student.profile_photo.url }}" class="rounded-circle" width="40" height="40" alt="Profile" style="object-fit: cover;">
+                                                    {% else %}
+                                                        <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                            <i class="fas fa-user text-white"></i>
+                                                        </div>
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ student.full_name }}</td>
+                                                <td>{{ student.student_class }}</td>
+                                                <td>{{ student.roll_number|default:"-" }}</td>
+                                                <td>
+                                                    <a href="{% url 'view_profile' student.user.username %}" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye"></i> View
+                                                    </a>
+                                                </td>
+                                            </tr>
+                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                    {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">No students assigned</h5>
+                                    <p class="text-muted">Students will appear here when assigned to your classes.</p>
+                                </div>
+                    {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</div>
+
+<script>
+        // Enhanced JavaScript with modern animations and real-time updates
+        
+        // Global variables
+        let isSubmitting = false;
+        
+        // Form submission with enhanced UX
+        document.addEventListener('DOMContentLoaded', function() {
+            const teacherPostForm = document.getElementById('teacherPostForm');
+            const submitBtn = document.querySelector('#teacherPostForm button[type="submit"]');
+            
+            if (teacherPostForm) {
+                teacherPostForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    if (isSubmitting) return;
+                    
+                    const textarea = document.getElementById('status_text');
+                    const fileInput = document.getElementById('status_image');
+                    
+                    console.log('=== DEBUG: Teacher post form submitted ===');
+                    console.log('Text:', textarea.value);
+                    console.log('File:', fileInput.files[0]);
+                    
+                    if (!textarea.value.trim()) {
+                        showMessage('Please enter some text to post!', 'warning');
+                        return;
+                    }
+                    
+                    // Show loading state
+                    isSubmitting = true;
+                    const originalContent = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<span class="loading-spinner"></span> Posting...';
+                    submitBtn.disabled = true;
+                    
+                    // Submit form
+                    const formData = new FormData(teacherPostForm);
+                    fetch(window.location.href, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': getCSRFToken()
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            showMessage('Post created successfully!', 'success');
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        } else {
+                            throw new Error('Failed to create post');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showMessage('Failed to create post. Please try again.', 'error');
+                    })
+                    .finally(() => {
+                        // Reset button state
+                        isSubmitting = false;
+                        submitBtn.innerHTML = originalContent;
+                        submitBtn.disabled = false;
+                    });
+                });
+            }
+        });
+
+        // Enhanced like functionality with animations
+        function likePost(postId) {
+            const likeBtn = document.querySelector(`[data-post-id="${postId}"]`);
+            const likeIcon = likeBtn.querySelector('i');
+            const likeCount = likeBtn.querySelector('.like-count');
+            
+            // Add immediate visual feedback
+            likeBtn.classList.add('liked');
+            likeIcon.style.animation = 'none';
+            likeIcon.offsetHeight; // Trigger reflow
+            likeIcon.style.animation = 'heartBeat 0.6s ease-in-out';
+            
+            fetch(`/api/status/${postId}/like/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    likeCount.textContent = data.likes_count;
+                    
+                    // Add floating heart animation
+                    const heart = document.createElement('div');
+                    heart.innerHTML = '❤️';
+                    heart.style.cssText = `
+                        position: absolute;
+                        font-size: 20px;
+                        pointer-events: none;
+                        animation: floatHeart 1s ease-out forwards;
+                        z-index: 1000;
+                    `;
+                    likeBtn.appendChild(heart);
+                    
+                    setTimeout(() => heart.remove(), 1000);
+                    
+                    showMessage(data.message, 'success');
+                } else {
+                    likeBtn.classList.remove('liked');
+                    showMessage('Failed to like post', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                likeBtn.classList.remove('liked');
+                showMessage('Failed to like post', 'error');
+            });
+        }
+
+        // Enhanced comment functionality
+        function showComments(postId) {
+            const commentsSection = document.getElementById(`comments-${postId}`);
+            const isVisible = commentsSection.classList.contains('show');
+            
+            if (isVisible) {
+                commentsSection.classList.remove('show');
+            } else {
+                // Hide all other comment sections first
+                document.querySelectorAll('.comments-section.show').forEach(section => {
+                    section.classList.remove('show');
+                });
+                
+                // Show this comment section with animation
+                commentsSection.classList.add('show');
+                
+                // Focus on comment input
+                setTimeout(() => {
+                    const commentInput = document.getElementById(`comment-${postId}`);
+                    if (commentInput) commentInput.focus();
+                }, 300);
+            }
+        }
+
+        function addComment(event, postId) {
+            event.preventDefault();
+            
+            const commentInput = document.getElementById(`comment-${postId}`);
+            const commentText = commentInput.value.trim();
+            
+            if (!commentText) {
+                showMessage('Please enter a comment!', 'warning');
+                return;
+            }
+            
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalContent = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="loading-spinner"></span>';
+            submitBtn.disabled = true;
+            
+            fetch(`/api/status/${postId}/comments/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: commentText })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Add new comment to DOM with animation
+                    const commentsList = document.querySelector(`#comments-${postId} .comments-list`);
+                    const newComment = createCommentElement(data.comment);
+                    commentsList.appendChild(newComment);
+                    
+                    // Update comment count
+                    const commentCount = document.querySelector(`[data-post-id="${postId}"]`).parentNode.querySelector('.comment-count');
+                    commentCount.textContent = parseInt(commentCount.textContent) + 1;
+                    
+                    // Clear input
+                    commentInput.value = '';
+                    
+                    showMessage('Comment added successfully!', 'success');
+                } else {
+                    showMessage('Failed to add comment', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('Failed to add comment', 'error');
+            })
+            .finally(() => {
+                submitBtn.innerHTML = originalContent;
+                submitBtn.disabled = false;
+            });
+        }
+
+        function createCommentElement(commentData) {
+            const commentDiv = document.createElement('div');
+            commentDiv.className = 'comment-item';
+            commentDiv.id = `comment-${commentData.id}`;
+            commentDiv.style.animation = 'fadeInLeft 0.4s ease-out';
+            
+            commentDiv.innerHTML = `
+                <div class="comment-header">
+                    <div class="comment-user">
+                        <div class="comment-pic bg-secondary d-flex align-items-center justify-content-center">
+                            <i class="fas fa-user text-white" style="font-size: 12px;"></i>
+                        </div>
+                        <div>
+                            <strong>${commentData.user_name}</strong>
+                            <br>
+                            <small class="text-muted">Just now</small>
+                        </div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteComment(${commentData.id})" title="Delete comment">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <p class="mb-0">${commentData.text}</p>
+            `;
+            
+            return commentDiv;
+        }
+
+        // Enhanced delete functionality
+        function deletePost(postId) {
+            if (!confirm('Are you sure you want to delete this post?')) return;
+            
+            const postCard = document.getElementById(`post-${postId}`);
+            postCard.style.animation = 'slideOutUp 0.3s ease-out';
+            
+            fetch(`/api/status/${postId}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    setTimeout(() => {
+                        postCard.remove();
+                        showMessage('Post deleted successfully!', 'success');
+                    }, 300);
+                } else {
+                    postCard.style.animation = '';
+                    showMessage('Failed to delete post', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                postCard.style.animation = '';
+                showMessage('Failed to delete post', 'error');
+            });
+        }
+
+        function deleteComment(commentId) {
+            if (!confirm('Are you sure you want to delete this comment?')) return;
+            
+            const commentItem = document.getElementById(`comment-${commentId}`);
+            commentItem.style.animation = 'fadeOutRight 0.3s ease-out';
+            
+            fetch(`/api/comment/${commentId}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    setTimeout(() => {
+                        commentItem.remove();
+                        showMessage('Comment deleted successfully!', 'success');
+                    }, 300);
+                } else {
+                    commentItem.style.animation = '';
+                    showMessage('Failed to delete comment', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                commentItem.style.animation = '';
+                showMessage('Failed to delete comment', 'error');
+            });
+        }
+
+        // Enhanced follow functionality
+        function toggleFollow(username) {
+            const followBtn = document.querySelector(`[data-username="${username}"]`);
+            const icon = followBtn.querySelector('i');
+            const text = followBtn.textContent.trim();
+            
+            // Add immediate visual feedback
+            followBtn.style.transform = 'scale(0.95)';
+            
+            fetch(`/api/follow/${username}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.is_following) {
+                        followBtn.classList.add('following');
+                        icon.className = 'fas fa-user-check';
+                        followBtn.innerHTML = '<i class="fas fa-user-check"></i> Following';
+                    } else {
+                        followBtn.classList.remove('following');
+                        icon.className = 'fas fa-user-plus';
+                        followBtn.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
+                    }
+                    
+                    showMessage(data.message, 'success');
+                } else {
+                    showMessage('Failed to update follow status', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('Failed to update follow status', 'error');
+            })
+            .finally(() => {
+                followBtn.style.transform = '';
+            });
+        }
+
+        // Enhanced message system
+        function showMessage(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            const bgColor = {
+                'success': 'bg-success',
+                'error': 'bg-danger',
+                'warning': 'bg-warning',
+                'info': 'bg-info'
+            }[type] || 'bg-info';
+            
+            toast.className = `toast ${bgColor} text-white p-3 rounded shadow`;
+            toast.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                    <span>${message}</span>
+                    <button type="button" class="btn-close btn-close-white ms-auto" onclick="this.parentElement.parentElement.remove()"></button>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.style.animation = 'slideOutRight 0.3s ease-out';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        // Utility functions
+        function getCSRFToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
+
+        // Add CSS for additional animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOutUp {
+                to {
+                    opacity: 0;
+                    transform: translateY(-30px);
+                }
+            }
+            
+            @keyframes fadeOutRight {
+                to {
+                    opacity: 0;
+                    transform: translateX(20px);
+                }
+            }
+            
+            @keyframes slideOutRight {
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+            
+            @keyframes floatHeart {
+                0% {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateY(-50px) scale(1.5);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+{% endblock %} 

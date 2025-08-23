@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/about.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+{% endblock %}
+{% block content %}
+    <!-- Hero Section -->
+    <section class="about-hero">
+        <h1>{{ about.title|default:"Welcome to Nawa Prativa" }}</h1>
+        <p>{{ about.subtitle|default:"Nurturing minds, building futures, and creating leaders since 2045 B.S." }}</p>
+    </section>
+    <!-- About Content -->
+    <main class="about-content">
+        <div class="container">
+            <!-- School History -->
+            <section class="history" data-aos="fade-up">
+                <h2>{{ about.history_title|default:"Our History" }}</h2>
+                <div class="history-content">
+                    <div class="history-text">
+                        {{ about.history_content|default:"<p>Nestled in the heart of Bhakunde Beshi, Kavrepalanchok, Nawa Prativa Secondary School began as a dream—a dream of parents, elders, and teachers who wanted their children to grow with knowledge, discipline, and dignity.</p><p>Established in 2045 B.S., the school started with just a handful of bamboo benches and blackboards under a tin roof. But what it lacked in resources, it made up for with love, dedication, and community support. Today, it stands as a proud educational home to hundreds of students, offering hope, opportunity, and a future.</p><p>Our journey is not just about books—it's about building confident, kind-hearted humans ready to serve the world.</p>"|safe }}
+                    </div>
+                    <div class="history-image" data-aos="zoom-in" data-aos-delay="200">
+                        {% if about.history_image %}
+                            <img src="{{ about.history_image.url }}" alt="School History" loading="lazy">
+                        {% else %}
+                            <img src="{% static 'images/about/school-history.jpg' %}" alt="School History" loading="lazy">
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+            <!-- Mission & Vision -->
+            <section class="mission-vision">
+                <div class="mission" data-aos="fade-right">
+                    <div class="icon-wrapper">
+                        <i class="{{ about.mission_icon|default:'fas fa-bullseye' }}"></i>
+                    </div>
+                    <h2>{{ about.mission_title|default:"Our Mission" }}</h2>
+                    <p>{{ about.mission_content|default:"To provide a nurturing environment that fosters academic excellence, character development, and lifelong learning, preparing students to become responsible global citizens who contribute positively to society." }}</p>
+                </div>
+                <div class="vision" data-aos="fade-left">
+                    <div class="icon-wrapper">
+                        <i class="{{ about.vision_icon|default:'fas fa-eye' }}"></i>
+                    </div>
+                    <h2>{{ about.vision_title|default:"Our Vision" }}</h2>
+                    <p>{{ about.vision_content|default:"To be a leading educational institution that inspires innovation, promotes excellence, and shapes future leaders who make a positive impact on society through knowledge, wisdom, and compassion." }}</p>
+                </div>
+            </section>
+            <!-- Core Values -->
+            <section class="core-values" data-aos="fade-up">
+                <h2>Our Core Values</h2>
+                <div class="values-grid">
+                    {% if core_values %}
+                        {% for value in core_values %}
+                            <div class="value-card" data-aos="zoom-in" data-aos-delay="{{ forloop.counter }}00">
+                                <i class="{{ value.icon }}"></i>
+                                <h3>{{ value.title }}</h3>
+                                <p>{{ value.description }}</p>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <!-- Default values if no database entries exist -->
+                        <div class="value-card" data-aos="zoom-in" data-aos-delay="100">
+                            <i class="fas fa-star"></i>
+                            <h3>Excellence</h3>
+                            <p>Striving for the highest standards in everything we do, from academics to character development.</p>
+                        </div>
+                        <div class="value-card" data-aos="zoom-in" data-aos-delay="200">
+                            <i class="fas fa-heart"></i>
+                            <h3>Integrity</h3>
+                            <p>Maintaining honesty, transparency, and strong moral principles in all our actions.</p>
+                        </div>
+                        <div class="value-card" data-aos="zoom-in" data-aos-delay="300">
+                            <i class="fas fa-users"></i>
+                            <h3>Respect</h3>
+                            <p>Valuing diversity, treating everyone with dignity, and fostering a culture of mutual respect.</p>
+                        </div>
+                        <div class="value-card" data-aos="zoom-in" data-aos-delay="400">
+                            <i class="fas fa-lightbulb"></i>
+                            <h3>Innovation</h3>
+                            <p>Encouraging creativity, embracing new ideas, and adapting to changing educational needs.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </section>
+            <!-- School Achievements -->
+            <section class="achievements" data-aos="fade-up">
+                <h2>Our Achievements</h2>
+                <div class="achievements-grid">
+                    {% if achievements %}
+                        {% for achievement in achievements %}
+                            <div class="achievement-card" data-aos="flip-left" data-aos-delay="{{ forloop.counter }}00">
+                                <div class="achievement-number">{{ achievement.number }}</div>
+                                <h3>{{ achievement.title }}</h3>
+                                <p>{{ achievement.description }}</p>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <!-- Default achievements if no database entries exist -->
+                        <div class="achievement-card" data-aos="flip-left" data-aos-delay="100">
+                            <div class="achievement-number">1000+</div>
+                            <h3>Graduates</h3>
+                            <p>Successful alumni making their mark in various fields</p>
+                        </div>
+                        <div class="achievement-card" data-aos="flip-left" data-aos-delay="200">
+                            <div class="achievement-number">50+</div>
+                            <h3>Teachers</h3>
+                            <p>Dedicated educators committed to excellence</p>
+                        </div>
+                        <div class="achievement-card" data-aos="flip-left" data-aos-delay="300">
+                            <div class="achievement-number">25+</div>
+                            <h3>Years</h3>
+                            <p>Of educational excellence and community service</p>
+                        </div>
+                        <div class="achievement-card" data-aos="flip-left" data-aos-delay="400">
+                            <div class="achievement-number">100%</div>
+                            <h3>Pass Rate</h3>
+                            <p>Consistent academic excellence in board exams</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </section>
+            <!-- School Motto -->
+            <section class="motto" data-aos="fade-up">
+                <blockquote>
+                    "Knowledge is Power, Character is Destiny"
+                </blockquote>
+            </section>
+        </div>
+    </main>
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Bhakunde Beshi, Kavrepalanchok, Nepal</p>
+                <p><i class="fas fa-phone"></i> +977-XXXXXXXXXX</p>
+                <p><i class="fas fa-envelope"></i> info@nawaprativa.edu.np</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about/">About</a></li>
+                    <li><a href="/faculty/">Faculty</a></li>
+                    <li><a href="/attendance/">Attendance</a></li>
+                    <li><a href="/notices/">Notices</a></li>
+                    <li><a href="/gallery/">Gallery</a></li>
+                    <li><a href="/results/">Results</a></li>
+                    <li><a href="/contact/">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Nawa Prativa Secondary School. All rights reserved.</p>
+        </div>
+    </footer>
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    <script>
+        // Initialize AOS (Animate On Scroll)
+        AOS.init({
+            duration: 800,
+            offset: 100,
+            once: true
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+// Responsive menu toggle for mobile
+const menuToggle = document.getElementById('menuToggle');
+const mainNav = document.getElementById('mainNav');
+if (menuToggle && mainNav) {
+    menuToggle.addEventListener('click', () => {
+        menuToggle.classList.toggle('active');
+        mainNav.classList.toggle('active');
+    });
+    document.addEventListener('click', (e) => {
+        if (!menuToggle.contains(e.target) && !mainNav.contains(e.target)) {
+            menuToggle.classList.remove('active');
+            mainNav.classList.remove('active');
+        }
+    });
+    const navLinks = document.querySelectorAll('.nav-list a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            menuToggle.classList.remove('active');
+            mainNav.classList.remove('active');
+        });
+    });
+}
+$(function() {
+    $('#logoutBtn').on('click', function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: '/api/logout/',
+            type: 'POST',
+            headers: { 'X-CSRFToken': (document.cookie.match('(^|;)\s*csrftoken\s*=\s*([^;]+)')||[])[2] },
+            success: function() {
+                window.location.reload();
+            },
+            error: function() {
+                alert('Logout failed. Please try again.');
+            }
+        });
+    });
+        });
+    </script>
+{% endblock %}

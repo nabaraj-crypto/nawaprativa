@@ -1,0 +1,1127 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Enhanced Marks Entry System - Nawa Prativa{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/enhanced_marks_entry.css' %}">
+<style>
+    .enhanced-marks-container {
+        padding: 20px;
+        background: #f8f9fa;
+        min-height: 100vh;
+    }
+    
+    .header-section {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    
+    .class-selection {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    
+    .class-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        align-items: end;
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+    
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .form-group label {
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .form-group input, .form-group select {
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+        background: #007bff;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #0056b3;
+    }
+    
+    .btn-success {
+        background: #28a745;
+        color: white;
+    }
+    
+    .btn-success:hover {
+        background: #1e7e34;
+    }
+    
+    .btn-warning {
+        background: #ffc107;
+        color: #212529;
+    }
+    
+    .btn-warning:hover {
+        background: #e0a800;
+    }
+    
+    .btn-info {
+        background: #17a2b8;
+        color: white;
+    }
+    
+    .btn-info:hover {
+        background: #138496;
+    }
+    
+    .marks-entry-section {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        overflow: hidden;
+        margin-bottom: 20px;
+        display: none;
+    }
+    
+    .marks-header {
+        background: #f8f9fa;
+        padding: 15px 20px;
+        border-bottom: 1px solid #dee2e6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .subject-selector {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    
+    .student-search {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .student-search input {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        min-width: 200px;
+    }
+    
+    .marks-table-container {
+        overflow-x: auto;
+        max-height: 70vh;
+    }
+    
+    .marks-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        background: white;
+    }
+    
+    .marks-table th {
+        background: #e9ecef;
+        padding: 12px 8px;
+        text-align: center;
+        font-weight: 600;
+        border: 1px solid #dee2e6;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        min-width: 120px;
+    }
+    
+    .marks-table td {
+        padding: 8px;
+        border: 1px solid #dee2e6;
+        text-align: center;
+        vertical-align: middle;
+    }
+    
+    .marks-table input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        text-align: center;
+        font-size: 13px;
+        background: white;
+    }
+    
+    .marks-table input:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        background: #f8f9ff;
+    }
+    
+    .marks-table input.auto-saved {
+        background: #d4edda;
+        border-color: #c3e6cb;
+    }
+    
+    .marks-table input.error {
+        background: #f8d7da;
+        border-color: #f5c6cb;
+    }
+    
+    .student-row {
+        background: #f8f9fa;
+    }
+    
+    .student-row:hover {
+        background: #e9ecef;
+    }
+    
+    .student-info {
+        background: #e9ecef;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #495057;
+    }
+    
+    .progress-section {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    
+    .progress-bar {
+        width: 100%;
+        height: 20px;
+        background: #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 10px 0;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #28a745, #20c997);
+        transition: width 0.3s ease;
+    }
+    
+    .status-indicator {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+    
+    .status-completed {
+        background: #28a745;
+    }
+    
+    .status-pending {
+        background: #ffc107;
+    }
+    
+    .status-not-started {
+        background: #6c757d;
+    }
+    
+    .navigation-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    
+    .auto-save-indicator {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #28a745;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 4px;
+        font-size: 14px;
+        z-index: 1000;
+        display: none;
+        animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    
+    .loading-spinner {
+        display: none;
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #007bff;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .error-message {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 10px 0;
+        display: none;
+    }
+    
+    .success-message {
+        background: #d4edda;
+        color: #155724;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 10px 0;
+        display: none;
+    }
+    
+    .view-results-section {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-top: 20px;
+    }
+    
+    .results-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        margin-top: 15px;
+    }
+    
+    .results-table th {
+        background: #e9ecef;
+        padding: 12px 8px;
+        text-align: center;
+        font-weight: 600;
+        border: 1px solid #dee2e6;
+    }
+    
+    .results-table td {
+        padding: 8px;
+        border: 1px solid #dee2e6;
+        text-align: center;
+    }
+    
+    .grade-cell {
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+    
+    .grade-a-plus { background: #d4edda; color: #155724; }
+    .grade-a { background: #d1ecf1; color: #0c5460; }
+    .grade-b-plus { background: #fff3cd; color: #856404; }
+    .grade-b { background: #f8d7da; color: #721c24; }
+    .grade-c-plus { background: #e2e3e5; color: #383d41; }
+    .grade-c { background: #f8d7da; color: #721c24; }
+    .grade-d { background: #f8d7da; color: #721c24; }
+    .grade-ng { background: #f8d7da; color: #721c24; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="enhanced-marks-container">
+    <!-- Header Section -->
+    <div class="header-section">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <h1><i class="fas fa-graduation-cap"></i> Enhanced Marks Entry System</h1>
+                <p>Streamlined marks entry with class-wise and subject-wise organization</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <a href=".." class="btn btn-info" style="text-decoration: none; display: inline-block;">
+                    <i class="fas fa-arrow-left"></i> Back to Results
+                </a>
+                <a href="../spreadsheet/" class="btn btn-warning" style="text-decoration: none; display: inline-block;">
+                    <i class="fas fa-table"></i> Spreadsheet View
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Class Selection Section -->
+    <div class="class-selection">
+        <h3><i class="fas fa-school"></i> Class/Grade Selection</h3>
+        <div class="class-form">
+            <div class="form-group">
+                <label for="classSelect">Select Class/Grade:</label>
+                <select id="classSelect" class="form-control">
+                    <option value="">Choose a class...</option>
+                    <option value="1">Class 1</option>
+                    <option value="2">Class 2</option>
+                    <option value="3">Class 3</option>
+                    <option value="4">Class 4</option>
+                    <option value="5">Class 5</option>
+                    <option value="6">Class 6</option>
+                    <option value="7">Class 7</option>
+                    <option value="8">Class 8</option>
+                    <option value="9">Class 9</option>
+                    <option value="10">Class 10</option>
+                    <option value="11">Class 11</option>
+                    <option value="12">Class 12</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="examTypeSelect">Exam Type:</label>
+                <select id="examTypeSelect" class="form-control">
+                    <option value="Mid Term">Mid Term</option>
+                    <option value="Final Term" selected>Final Term</option>
+                    <option value="Unit Test">Unit Test</option>
+                    <option value="Pre-Board">Pre-Board</option>
+                    <option value="Board Exam">Board Exam</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="academicYearSelect">Academic Year:</label>
+                <select id="academicYearSelect" class="form-control">
+                    <option value="2024-25" selected>2024-25</option>
+                    <option value="2023-24">2023-24</option>
+                    <option value="2022-23">2022-23</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <button id="loadClassBtn" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Load Class
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Section -->
+    <div class="progress-section" style="display: none;">
+        <h3><i class="fas fa-chart-line"></i> Entry Progress</h3>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+        <div id="progressText">0% Complete</div>
+        <div id="subjectStatus" style="margin-top: 15px;"></div>
+    </div>
+
+    <!-- Marks Entry Section -->
+    <div class="marks-entry-section" id="marksEntrySection">
+        <div class="marks-header">
+            <div class="subject-selector">
+                <label for="subjectSelect">Current Subject:</label>
+                <select id="subjectSelect" class="form-control">
+                    <option value="">Select subject...</option>
+                </select>
+                <span id="currentSubjectInfo"></span>
+            </div>
+            <div class="student-search">
+                <input type="text" id="studentSearchInput" placeholder="Search students..." />
+                <button id="clearSearchBtn" class="btn btn-outline-secondary">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <p>Loading students...</p>
+        </div>
+        
+        <div class="marks-table-container">
+            <!-- Marks Entry Legend -->
+            <div class="marks-legend" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #dee2e6;">
+                <h4 style="margin: 0 0 10px 0; color: #495057;"><i class="fas fa-info-circle"></i> Marks Entry Guide</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; font-size: 14px;">
+                    <div>
+                        <strong>Theory Total:</strong> Full marks available for theory (e.g., 100) - <em>For grade calculation</em>
+                    </div>
+                    <div>
+                        <strong>Theory Marks:</strong> Marks student actually gets in theory - <em>Added to total</em>
+                    </div>
+                    <div>
+                        <strong>Practical Total:</strong> Full marks available for practical (e.g., 50) - <em>For grade calculation</em>
+                    </div>
+                    <div>
+                        <strong>Practical Marks:</strong> Marks student actually gets in practical - <em>Added to total</em>
+                    </div>
+                    <div style="grid-column: 1 / -1; color: #28a745; font-weight: 500;">
+                        <i class="fas fa-calculator"></i> <strong>Calculation:</strong> Total Marks = Theory Marks + Practical Marks (for pass/fail analysis)
+                    </div>
+                    <div style="grid-column: 1 / -1; color: #17a2b8; font-weight: 500;">
+                        <i class="fas fa-percentage"></i> <strong>Grade Calculation:</strong> Percentage = (Total Marks / Total Possible) × 100 (based on full marks)
+                    </div>
+                    <div style="grid-column: 1 / -1; color: #dc3545; font-weight: 500;">
+                        <i class="fas fa-exclamation-triangle"></i> <strong>Important:</strong> If total marks are below 35% of total possible marks, the result will be marked as "NG"
+                    </div>
+                </div>
+            </div>
+            
+            <table class="marks-table" id="marksTable">
+                <thead>
+                    <tr>
+                        <th>Roll No.</th>
+                        <th>Student Name</th>
+                        <th>Theory Marks<br><small>(Student's Score)</small></th>
+                        <th>Theory Total<br><small>(For Grade Calc)</small></th>
+                        <th>Practical Marks<br><small>(Student's Score)</small></th>
+                        <th>Practical Total<br><small>(For Grade Calc)</small></th>
+                        <th>Total Marks<br><small>(For Pass/Fail)</small></th>
+                        <th>Percentage<br><small>(Based on Full Marks)</small></th>
+                        <th>Grade</th>
+                        <th>Grade Point</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="marksTableBody">
+                    <!-- Student rows will be populated here -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="navigation-buttons">
+            <button id="prevSubjectBtn" class="btn btn-warning" disabled>
+                <i class="fas fa-arrow-left"></i> Previous Subject
+            </button>
+            <button id="nextSubjectBtn" class="btn btn-success">
+                <i class="fas fa-arrow-right"></i> Next Subject
+            </button>
+            <button id="finishEntryBtn" class="btn btn-primary" style="display: none;">
+                <i class="fas fa-check"></i> Finish Entry
+            </button>
+        </div>
+    </div>
+
+    <!-- View Results Section -->
+    <div class="view-results-section" id="viewResultsSection" style="display: none;">
+        <h3><i class="fas fa-table"></i> View Results</h3>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label for="resultClassSelect">Select Class to View:</label>
+            <select id="resultClassSelect" class="form-control">
+                <option value="">Choose a class...</option>
+            </select>
+        </div>
+        <div id="resultsTableContainer"></div>
+    </div>
+
+    <!-- Auto-save Indicator -->
+    <div class="auto-save-indicator" id="autoSaveIndicator">
+        <i class="fas fa-save"></i> Auto-saved successfully!
+    </div>
+
+    <!-- Error/Success Messages -->
+    <div class="error-message" id="errorMessage"></div>
+    <div class="success-message" id="successMessage"></div>
+</div>
+
+<script>
+// Global variables
+let currentClass = '';
+let currentExamType = '';
+let currentAcademicYear = '';
+let currentSubject = '';
+let subjects = [];
+let students = [];
+let marksData = {};
+let currentSubjectIndex = 0;
+let autoSaveTimeout = null;
+
+// DOM Elements
+const elements = {
+    classSelect: document.getElementById('classSelect'),
+    examTypeSelect: document.getElementById('examTypeSelect'),
+    academicYearSelect: document.getElementById('academicYearSelect'),
+    loadClassBtn: document.getElementById('loadClassBtn'),
+    progressSection: document.querySelector('.progress-section'),
+    progressFill: document.getElementById('progressFill'),
+    progressText: document.getElementById('progressText'),
+    subjectStatus: document.getElementById('subjectStatus'),
+    marksEntrySection: document.getElementById('marksEntrySection'),
+    subjectSelect: document.getElementById('subjectSelect'),
+    currentSubjectInfo: document.getElementById('currentSubjectInfo'),
+    studentSearchInput: document.getElementById('studentSearchInput'),
+    clearSearchBtn: document.getElementById('clearSearchBtn'),
+    loadingSpinner: document.getElementById('loadingSpinner'),
+    marksTable: document.getElementById('marksTable'),
+    marksTableBody: document.getElementById('marksTableBody'),
+    prevSubjectBtn: document.getElementById('prevSubjectBtn'),
+    nextSubjectBtn: document.getElementById('nextSubjectBtn'),
+    finishEntryBtn: document.getElementById('finishEntryBtn'),
+    viewResultsSection: document.getElementById('viewResultsSection'),
+    resultClassSelect: document.getElementById('resultClassSelect'),
+    resultsTableContainer: document.getElementById('resultsTableContainer'),
+    autoSaveIndicator: document.getElementById('autoSaveIndicator'),
+    errorMessage: document.getElementById('errorMessage'),
+    successMessage: document.getElementById('successMessage')
+};
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', function() {
+    elements.loadClassBtn.addEventListener('click', loadClass);
+    elements.subjectSelect.addEventListener('change', onSubjectChange);
+    elements.studentSearchInput.addEventListener('input', filterStudents);
+    elements.clearSearchBtn.addEventListener('click', clearSearch);
+    elements.prevSubjectBtn.addEventListener('click', previousSubject);
+    elements.nextSubjectBtn.addEventListener('click', nextSubject);
+    elements.finishEntryBtn.addEventListener('click', finishEntry);
+    elements.resultClassSelect.addEventListener('change', loadResults);
+    
+    // Initialize subjects
+    initializeSubjects();
+});
+
+// Initialize subjects
+function initializeSubjects() {
+    subjects = [
+        { name: 'English', code: 'ENG', credit_hour: 4 },
+        { name: 'Nepali', code: 'NEP', credit_hour: 5 },
+        { name: 'Mathematics', code: 'MATH', credit_hour: 5 },
+        { name: 'Science', code: 'SCI', credit_hour: 5 },
+        { name: 'Social Studies', code: 'SOC', credit_hour: 4 },
+        { name: 'Computer', code: 'COMP', credit_hour: 3 },
+        { name: 'Health', code: 'HEALTH', credit_hour: 2 },
+        { name: 'Optional Math', code: 'OPT_MATH', credit_hour: 4 },
+        { name: 'Accountancy', code: 'ACC', credit_hour: 4 },
+        { name: 'Economics', code: 'ECO', credit_hour: 4 }
+    ];
+}
+
+// Load class data
+async function loadClass() {
+    currentClass = elements.classSelect.value;
+    currentExamType = elements.examTypeSelect.value;
+    currentAcademicYear = elements.academicYearSelect.value;
+    
+    if (!currentClass) {
+        showError('Please select a class first.');
+        return;
+    }
+    
+    try {
+        showLoading();
+        hideError();
+        
+        // Load students for the selected class
+        const response = await fetch(`/api/students/?class=${currentClass}`);
+        if (!response.ok) throw new Error('Failed to load students');
+        
+        const data = await response.json();
+        students = data.filter(student => student.student_class === currentClass);
+        
+        if (students.length === 0) {
+            showError('No students found for the selected class.');
+            return;
+        }
+        
+        // Initialize marks data
+        initializeMarksData();
+        
+        // Populate subject dropdown
+        populateSubjectDropdown();
+        
+        // Show sections
+        elements.progressSection.style.display = 'block';
+        elements.marksEntrySection.style.display = 'block';
+        elements.viewResultsSection.style.display = 'block';
+        
+        // Load first subject
+        currentSubjectIndex = 0;
+        loadSubject(0);
+        
+        showSuccess(`Loaded ${students.length} students for Class ${currentClass}`);
+        
+    } catch (error) {
+        showError('Failed to load class data: ' + error.message);
+        console.error('Error loading class:', error);
+    } finally {
+        hideLoading();
+    }
+}
+
+// Initialize marks data structure
+function initializeMarksData() {
+    marksData = {};
+    subjects.forEach(subject => {
+        marksData[subject.name] = {};
+        students.forEach(student => {
+            marksData[subject.name][student.symbol_number] = {
+                theory_marks: '',
+                theory_total: 100,
+                practical_marks: '',
+                practical_total: 0,
+                total_marks: '',
+                percentage: '',
+                grade: '',
+                grade_point: '',
+                status: 'Not Started'
+            };
+        });
+    });
+}
+
+// Populate subject dropdown
+function populateSubjectDropdown() {
+    elements.subjectSelect.innerHTML = '<option value="">Select subject...</option>';
+    subjects.forEach((subject, index) => {
+        const option = document.createElement('option');
+        option.value = subject.name;
+        option.textContent = `${subject.name} (${subject.code})`;
+        option.dataset.index = index;
+        elements.subjectSelect.appendChild(option);
+    });
+}
+
+// Load subject
+function loadSubject(index) {
+    if (index < 0 || index >= subjects.length) return;
+    
+    currentSubjectIndex = index;
+    currentSubject = subjects[index].name;
+    
+    elements.subjectSelect.value = currentSubject;
+    elements.currentSubjectInfo.textContent = `Subject ${index + 1} of ${subjects.length}`;
+    
+    // Update progress
+    updateProgress();
+    
+    // Populate table
+    populateMarksTable();
+    
+    // Update navigation buttons
+    elements.prevSubjectBtn.disabled = index === 0;
+    elements.nextSubjectBtn.style.display = index === subjects.length - 1 ? 'none' : 'inline-block';
+    elements.finishEntryBtn.style.display = index === subjects.length - 1 ? 'inline-block' : 'none';
+}
+
+// On subject change
+function onSubjectChange() {
+    const selectedSubject = elements.subjectSelect.value;
+    if (!selectedSubject) return;
+    
+    const index = subjects.findIndex(s => s.name === selectedSubject);
+    if (index !== -1) {
+        loadSubject(index);
+    }
+}
+
+// Populate marks table
+function populateMarksTable() {
+    elements.marksTableBody.innerHTML = '';
+    
+    students.forEach(student => {
+        const row = document.createElement('tr');
+        row.className = 'student-row';
+        row.dataset.symbolNumber = student.symbol_number;
+        
+        const currentMarks = marksData[currentSubject][student.symbol_number];
+        
+        row.innerHTML = `
+            <td><span class="student-info">${student.symbol_number}</span></td>
+            <td>${student.full_name}</td>
+            <td><input type="number" class="theory-marks" data-symbol="${student.symbol_number}" 
+                       value="${currentMarks.theory_marks}" min="0" max="100" step="0.01"></td>
+            <td><input type="number" class="theory-total" data-symbol="${student.symbol_number}" 
+                       value="${currentMarks.theory_total}" min="0" max="200" step="0.01"></td>
+            <td><input type="number" class="practical-marks" data-symbol="${student.symbol_number}" 
+                       value="${currentMarks.practical_marks}" min="0" max="50" step="0.01"></td>
+            <td><input type="number" class="practical-total" data-symbol="${student.symbol_number}" 
+                       value="${currentMarks.practical_total}" min="0" max="50" step="0.01"></td>
+            <td class="total-marks">${currentMarks.total_marks || ''}</td>
+            <td class="percentage">${currentMarks.percentage || ''}</td>
+            <td class="grade">${currentMarks.grade || ''}</td>
+            <td class="grade-point">${currentMarks.grade_point || ''}</td>
+            <td class="status">${currentMarks.status}</td>
+        `;
+        
+        elements.marksTableBody.appendChild(row);
+    });
+    
+    // Add event listeners for input changes
+    addInputEventListeners();
+}
+
+// Add input event listeners
+function addInputEventListeners() {
+    const inputs = elements.marksTableBody.querySelectorAll('input');
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            const symbolNumber = this.dataset.symbol;
+            const fieldType = this.className.split('-')[0];
+            
+            // Update marks data
+            marksData[currentSubject][symbolNumber][fieldType + '_marks'] = this.value;
+            
+            // Calculate totals
+            calculateStudentMarks(symbolNumber);
+            
+            // Auto-save
+            scheduleAutoSave();
+        });
+    });
+}
+
+// Calculate student marks
+function calculateStudentMarks(symbolNumber) {
+    const marks = marksData[currentSubject][symbolNumber];
+    
+    const theoryMarks = parseFloat(marks.theory_marks) || 0;
+    const theoryTotal = parseFloat(marks.theory_total) || 100;
+    const practicalMarks = parseFloat(marks.practical_marks) || 0;
+    const practicalTotal = parseFloat(marks.practical_total) || 0;
+    
+    // Calculate total marks
+    const totalMarks = theoryMarks + practicalMarks;
+    const totalPossible = theoryTotal + practicalTotal;
+    
+    // Calculate percentage
+    const percentage = totalPossible > 0 ? (totalMarks / totalPossible) * 100 : 0;
+    
+    // Get grade and grade point
+    const { grade, gradePoint } = getGradeAndPoint(percentage);
+    
+    // Update marks data
+    marks.total_marks = totalMarks.toFixed(2);
+    marks.percentage = percentage.toFixed(2);
+    marks.grade = grade;
+    marks.grade_point = gradePoint.toFixed(2);
+    marks.status = percentage >= 40 ? 'Passed' : 'Failed';
+    
+    // Update table display
+    updateTableRow(symbolNumber, marks);
+}
+
+// Update table row
+function updateTableRow(symbolNumber, marks) {
+    const row = elements.marksTableBody.querySelector(`[data-symbol-number="${symbolNumber}"]`);
+    if (!row) return;
+    
+    row.querySelector('.total-marks').textContent = marks.total_marks;
+    row.querySelector('.percentage').textContent = marks.percentage;
+    row.querySelector('.grade').textContent = marks.grade;
+    row.querySelector('.grade-point').textContent = marks.grade_point;
+    row.querySelector('.status').textContent = marks.status;
+    
+    // Add grade styling
+    const gradeCell = row.querySelector('.grade');
+    gradeCell.className = 'grade grade-' + marks.grade.toLowerCase().replace('+', '-plus');
+}
+
+// Get grade and grade point
+function getGradeAndPoint(percentage) {
+    if (percentage >= 90) return { grade: 'A+', gradePoint: 4.0 };
+    if (percentage >= 80) return { grade: 'A', gradePoint: 3.6 };
+    if (percentage >= 70) return { grade: 'B+', gradePoint: 3.2 };
+    if (percentage >= 60) return { grade: 'B', gradePoint: 2.8 };
+    if (percentage >= 50) return { grade: 'C+', gradePoint: 2.4 };
+    if (percentage >= 40) return { grade: 'C', gradePoint: 2.0 };
+    if (percentage >= 30) return { grade: 'D', gradePoint: 1.6 };
+    return { grade: 'NG', gradePoint: 0.0 };
+}
+
+// Schedule auto-save
+function scheduleAutoSave() {
+    if (autoSaveTimeout) {
+        clearTimeout(autoSaveTimeout);
+    }
+    
+    autoSaveTimeout = setTimeout(() => {
+        autoSaveMarks();
+    }, 2000); // Auto-save after 2 seconds of inactivity
+}
+
+// Auto-save marks
+async function autoSaveMarks() {
+    try {
+        const response = await fetch('/api/results/bulk-save/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({
+                class_name: currentClass,
+                exam_type: currentExamType,
+                academic_year: currentAcademicYear,
+                subject: currentSubject,
+                marks_data: marksData[currentSubject]
+            })
+        });
+        
+        if (response.ok) {
+            showAutoSaveIndicator();
+            updateSubjectStatus(currentSubject, 'Completed');
+        }
+    } catch (error) {
+        console.error('Auto-save failed:', error);
+    }
+}
+
+// Show auto-save indicator
+function showAutoSaveIndicator() {
+    elements.autoSaveIndicator.style.display = 'block';
+    setTimeout(() => {
+        elements.autoSaveIndicator.style.display = 'none';
+    }, 3000);
+}
+
+// Update progress
+function updateProgress() {
+    const completedSubjects = subjects.filter(subject => 
+        marksData[subject.name] && 
+        Object.values(marksData[subject.name]).some(marks => marks.status !== 'Not Started')
+    ).length;
+    
+    const progress = (completedSubjects / subjects.length) * 100;
+    elements.progressFill.style.width = progress + '%';
+    elements.progressText.textContent = `${Math.round(progress)}% Complete`;
+    
+    // Update subject status
+    updateSubjectStatusDisplay();
+}
+
+// Update subject status display
+function updateSubjectStatusDisplay() {
+    let statusHTML = '';
+    subjects.forEach((subject, index) => {
+        const isCurrent = index === currentSubjectIndex;
+        const hasData = marksData[subject.name] && 
+                       Object.values(marksData[subject.name]).some(marks => marks.status !== 'Not Started');
+        
+        let statusClass = 'status-not-started';
+        let statusText = 'Not Started';
+        
+        if (isCurrent) {
+            statusClass = 'status-pending';
+            statusText = 'In Progress';
+        } else if (hasData) {
+            statusClass = 'status-completed';
+            statusText = 'Completed';
+        }
+        
+        statusHTML += `
+            <span class="status-indicator ${statusClass}"></span>
+            ${subject.name} - ${statusText}
+            ${isCurrent ? ' (Current)' : ''}
+            <br>
+        `;
+    });
+    
+    elements.subjectStatus.innerHTML = statusHTML;
+}
+
+// Update subject status
+function updateSubjectStatus(subjectName, status) {
+    if (marksData[subjectName]) {
+        Object.values(marksData[subjectName]).forEach(marks => {
+            if (marks.status === 'Not Started') {
+                marks.status = status;
+            }
+        });
+    }
+    updateProgress();
+}
+
+// Filter students
+function filterStudents() {
+    const searchTerm = elements.studentSearchInput.value.toLowerCase();
+    const rows = elements.marksTableBody.querySelectorAll('tr');
+    
+    rows.forEach(row => {
+        const studentName = row.cells[1].textContent.toLowerCase();
+        const symbolNumber = row.cells[0].textContent.toLowerCase();
+        
+        if (studentName.includes(searchTerm) || symbolNumber.includes(searchTerm)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+// Clear search
+function clearSearch() {
+    elements.studentSearchInput.value = '';
+    filterStudents();
+}
+
+// Previous subject
+function previousSubject() {
+    if (currentSubjectIndex > 0) {
+        loadSubject(currentSubjectIndex - 1);
+    }
+}
+
+// Next subject
+function nextSubject() {
+    if (currentSubjectIndex < subjects.length - 1) {
+        loadSubject(currentSubjectIndex + 1);
+    }
+}
+
+// Finish entry
+function finishEntry() {
+    showSuccess('Marks entry completed successfully!');
+    // Optionally redirect to results view
+    loadResults();
+}
+
+// Load results
+async function loadResults() {
+    const selectedClass = elements.resultClassSelect.value || currentClass;
+    
+    if (!selectedClass) {
+        showError('Please select a class to view results.');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/results/?class=${selectedClass}&exam_type=${currentExamType}&academic_year=${currentAcademicYear}`);
+        if (!response.ok) throw new Error('Failed to load results');
+        
+        const results = await response.json();
+        displayResults(results);
+        
+    } catch (error) {
+        showError('Failed to load results: ' + error.message);
+    }
+}
+
+// Display results
+function displayResults(results) {
+    if (results.length === 0) {
+        elements.resultsTableContainer.innerHTML = '<p>No results found for the selected criteria.</p>';
+        return;
+    }
+    
+    let tableHTML = `
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Roll No.</th>
+                    <th>Student Name</th>
+                    <th>Class</th>
+                    <th>Total Marks</th>
+                    <th>GPA</th>
+                    <th>Percentage</th>
+                    <th>Grade</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    results.forEach(result => {
+        const gradeClass = 'grade-' + (result.grade || 'ng').toLowerCase().replace('+', '-plus');
+        tableHTML += `
+            <tr>
+                <td>${result.roll_number}</td>
+                <td>${result.student_name}</td>
+                <td>${result.student_class}</td>
+                <td>${result.total || 0}</td>
+                <td>${result.gpa || 0}</td>
+                <td>${result.percentage || 0}%</td>
+                <td class="grade-cell ${gradeClass}">${result.grade || 'NG'}</td>
+                <td>${result.gpa >= 2.0 ? 'Passed' : 'Failed'}</td>
+            </tr>
+        `;
+    });
+    
+    tableHTML += '</tbody></table>';
+    elements.resultsTableContainer.innerHTML = tableHTML;
+}
+
+// Utility functions
+function showLoading() {
+    elements.loadingSpinner.style.display = 'block';
+}
+
+function hideLoading() {
+    elements.loadingSpinner.style.display = 'none';
+}
+
+function showError(message) {
+    elements.errorMessage.textContent = message;
+    elements.errorMessage.style.display = 'block';
+    elements.successMessage.style.display = 'none';
+}
+
+function hideError() {
+    elements.errorMessage.style.display = 'none';
+}
+
+function showSuccess(message) {
+    elements.successMessage.textContent = message;
+    elements.successMessage.style.display = 'block';
+    elements.errorMessage.style.display = 'none';
+}
+
+function hideSuccess() {
+    elements.successMessage.style.display = 'none';
+}
+
+function getCSRFToken() {
+    const name = 'csrftoken';
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+    }
+</script>
+<script src="{% static 'js/enhanced_marks_entry.js' %}"></script>
+{% endblock %} 

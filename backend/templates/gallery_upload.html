@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Upload to Gallery</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" id="galleryUploadForm">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="mediaType" class="form-label">Media Type</label>
+                            <select class="form-select" id="mediaType" name="media_type" required>
+                                <option value="image">Image</option>
+                                <option value="video">Video</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3" id="imageUploadDiv">
+                            <label for="imageUpload" class="form-label">Image</label>
+                            <input type="file" class="form-control" id="imageUpload" name="image" accept="image/*">
+                            <div class="form-text">Supported formats: JPG, PNG, GIF (Max size: 5MB)</div>
+                        </div>
+                        
+                        <div class="mb-3" id="videoUploadDiv" style="display: none;">
+                            <label for="videoUpload" class="form-label">Video</label>
+                            <input type="file" class="form-control" id="videoUpload" name="video" accept="video/mp4,video/webm,video/ogg,video/x-matroska">
+                            <div class="form-text">Supported formats: MP4, WebM, OGG, MKV (Max size: 50MB)</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="caption" class="form-label">Caption</label>
+                            <input type="text" class="form-control" id="caption" name="caption" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category</label>
+                            <input type="text" class="form-control" id="category" name="category">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="tags" class="form-label">Tags</label>
+                            <input type="text" class="form-control" id="tags" name="tags" placeholder="Comma-separated tags">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" name="status">
+                                <option value="Published">Published</option>
+                                <option value="Draft">Draft</option>
+                            </select>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Upload</button>
+                            <a href="{% url 'gallery' %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mediaTypeSelect = document.getElementById('mediaType');
+        const imageUploadDiv = document.getElementById('imageUploadDiv');
+        const videoUploadDiv = document.getElementById('videoUploadDiv');
+        const imageUpload = document.getElementById('imageUpload');
+        const videoUpload = document.getElementById('videoUpload');
+        
+        // Toggle between image and video upload fields
+        mediaTypeSelect.addEventListener('change', function() {
+            if (this.value === 'image') {
+                imageUploadDiv.style.display = 'block';
+                videoUploadDiv.style.display = 'none';
+                imageUpload.required = true;
+                videoUpload.required = false;
+                videoUpload.value = '';
+            } else {
+                imageUploadDiv.style.display = 'none';
+                videoUploadDiv.style.display = 'block';
+                imageUpload.required = false;
+                videoUpload.required = true;
+                imageUpload.value = '';
+            }
+        });
+        
+        // Form validation
+        document.getElementById('galleryUploadForm').addEventListener('submit', function(e) {
+            const mediaType = mediaTypeSelect.value;
+            
+            if (mediaType === 'image' && !imageUpload.files.length) {
+                e.preventDefault();
+                alert('Please select an image to upload.');
+                return false;
+            }
+            
+            if (mediaType === 'video' && !videoUpload.files.length) {
+                e.preventDefault();
+                alert('Please select a video to upload.');
+                return false;
+            }
+            
+            // File size validation
+            if (mediaType === 'image' && imageUpload.files.length) {
+                if (imageUpload.files[0].size > 5 * 1024 * 1024) { // 5MB
+                    e.preventDefault();
+                    alert('Image size exceeds 5MB limit.');
+                    return false;
+                }
+            }
+            
+            if (mediaType === 'video' && videoUpload.files.length) {
+                if (videoUpload.files[0].size > 50 * 1024 * 1024) { // 50MB
+                    e.preventDefault();
+                    alert('Video size exceeds 50MB limit.');
+                    return false;
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

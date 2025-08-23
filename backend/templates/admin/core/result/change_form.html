@@ -1,0 +1,480 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    .result-form-container {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin: 20px 0;
+        overflow: hidden;
+    }
+    
+    .form-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }
+    
+    .form-header h2 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+    }
+    
+    .form-content {
+        padding: 30px;
+    }
+    
+    .form-section {
+        margin-bottom: 30px;
+        padding: 20px;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        background: #f8f9fa;
+    }
+    
+    .form-section h3 {
+        margin: 0 0 20px 0;
+        color: #495057;
+        font-size: 18px;
+        border-bottom: 2px solid #dee2e6;
+        padding-bottom: 10px;
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 15px;
+    }
+    
+    .form-field {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .form-field label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 5px;
+    }
+    
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+        padding: 10px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 14px;
+        transition: border-color 0.2s ease;
+    }
+    
+    .form-field input:focus,
+    .form-field select:focus,
+    .form-field textarea:focus {
+        outline: none;
+        border-color: #2196f3;
+        box-shadow: 0 0 5px rgba(33, 150, 243, 0.3);
+    }
+    
+    .auto-calculated {
+        background: #e8f5e8;
+        color: #2e7d32;
+        font-weight: 500;
+    }
+    
+    .auto-calculated::after {
+        content: " (Auto-calculated)";
+        font-size: 12px;
+        opacity: 0.7;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        padding: 20px;
+        background: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+    }
+    
+    .btn-form {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .btn-primary {
+        background: #2196f3;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #1976d2;
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+    
+    .btn-secondary:hover {
+        background: #545b62;
+    }
+    
+    .btn-success {
+        background: #4caf50;
+        color: white;
+    }
+    
+    .btn-success:hover {
+        background: #388e3c;
+    }
+    
+    .subject-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+    }
+    
+    .subject-card {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        padding: 15px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .subject-card h4 {
+        margin: 0 0 10px 0;
+        color: #495057;
+        font-size: 14px;
+        text-align: center;
+        background: #e8f5e8;
+        padding: 5px;
+        border-radius: 3px;
+    }
+    
+    .subject-inputs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+    
+    .input-group {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .input-group label {
+        font-size: 12px;
+        font-weight: 500;
+        color: #6c757d;
+        margin-bottom: 3px;
+    }
+    
+    .input-group input {
+        padding: 6px 8px;
+        border: 1px solid #ced4da;
+        border-radius: 3px;
+        font-size: 12px;
+    }
+    
+    .performance-summary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+    }
+    
+    .performance-summary h3 {
+        margin: 0 0 15px 0;
+        text-align: center;
+    }
+    
+    .performance-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+    }
+    
+    .performance-item {
+        text-align: center;
+        background: rgba(255,255,255,0.1);
+        padding: 15px;
+        border-radius: 6px;
+    }
+    
+    .performance-item .value {
+        font-size: 24px;
+        font-weight: 600;
+        display: block;
+    }
+    
+    .performance-item .label {
+        font-size: 12px;
+        opacity: 0.9;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="result-form-container">
+    <div class="form-header">
+        <h2>📊 {% if original %}Edit{% else %}Add New{% endif %} Student Result</h2>
+        <p>{% if original %}Update result for {{ original.student_name }}{% else %}Enter student result details{% endif %}</p>
+    </div>
+    
+    <div class="form-content">
+        <form method="post" id="result-form">
+            {% csrf_token %}
+            
+            <!-- Basic Information Section -->
+            <div class="form-section">
+                <h3>👤 Student Information</h3>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="id_student_name">Student Name</label>
+                        {{ adminform.form.student_name }}
+                    </div>
+                    <div class="form-field">
+                        <label for="id_roll_number">Roll Number</label>
+                        {{ adminform.form.roll_number }}
+                    </div>
+                    <div class="form-field">
+                        <label for="id_student_class">Class</label>
+                        {{ adminform.form.student_class }}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Exam Details Section -->
+            <div class="form-section">
+                <h3>📝 Exam Details</h3>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="id_exam_type">Exam Type</label>
+                        {{ adminform.form.exam_type }}
+                    </div>
+                    <div class="form-field">
+                        <label for="id_academic_year">Academic Year</label>
+                        {{ adminform.form.academic_year }}
+                    </div>
+                    <div class="form-field">
+                        <label for="id_exam_date">Exam Date</label>
+                        {{ adminform.form.exam_date }}
+                    </div>
+                    <div class="form-field">
+                        <label for="id_semester">Semester</label>
+                        {{ adminform.form.semester }}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Performance Summary -->
+            <div class="performance-summary">
+                <h3>📈 Performance Summary</h3>
+                <div class="performance-grid">
+                    <div class="performance-item">
+                        <span class="value" id="total-display">{{ original.total|default:"0" }}</span>
+                        <span class="label">Total Marks</span>
+                    </div>
+                    <div class="performance-item">
+                        <span class="value" id="percentage-display">{{ original.percentage|default:"0.00" }}%</span>
+                        <span class="label">Percentage</span>
+                    </div>
+                    <div class="performance-item">
+                        <span class="value" id="gpa-display">{{ original.gpa|default:"0.00" }}</span>
+                        <span class="label">GPA</span>
+                    </div>
+                    <div class="performance-item">
+                        <span class="value" id="grade-display">{{ original.get_performance_status|default:"N/A" }}</span>
+                        <span class="label">Grade</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Performance Fields -->
+            <div class="form-section">
+                <h3>📊 Performance Metrics</h3>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="id_total">Total Marks</label>
+                        {{ adminform.form.total }}
+                    </div>
+                    <div class="form-field">
+                        <label for="id_gpa">GPA</label>
+                        {{ adminform.form.gpa }}
+                    </div>
+                    <div class="form-field">
+                        <label for="id_percentage">Percentage</label>
+                        {{ adminform.form.percentage }}
+                        <small class="auto-calculated">Auto-calculated from GPA</small>
+                    </div>
+                    <div class="form-field">
+                        <label for="id_class_position">Class Position</label>
+                        {{ adminform.form.class_position }}
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="id_total_students">Total Students in Class</label>
+                        {{ adminform.form.total_students }}
+                    </div>
+                    <div class="form-field">
+                        <label for="id_total_subjects">Total Subjects</label>
+                        {{ adminform.form.total_subjects }}
+                    </div>
+                    <div class="form-field">
+                        <label for="id_passed_subjects">Passed Subjects</label>
+                        {{ adminform.form.passed_subjects }}
+                    </div>
+                    <div class="form-field">
+                        <label for="id_failed_subjects">Failed Subjects</label>
+                        {{ adminform.form.failed_subjects }}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Publication Section -->
+            <div class="form-section">
+                <h3>📢 Publication Settings</h3>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="id_is_published">Publish Result</label>
+                        {{ adminform.form.is_published }}
+                        <small>Make this result visible to students</small>
+                    </div>
+                    <div class="form-field">
+                        <label for="id_published_by">Published By</label>
+                        {{ adminform.form.published_by }}
+                    </div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="id_remarks">Remarks</label>
+                    {{ adminform.form.remarks }}
+                    <small>Additional comments or notes</small>
+                </div>
+            </div>
+            
+            <!-- Subject Results (if using inline) -->
+            {% if inline_admin_formsets %}
+            <div class="form-section">
+                <h3>📚 Subject Results</h3>
+                {% for inline_admin_formset in inline_admin_formsets %}
+                    {% include inline_admin_formset.opts.template %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </form>
+    </div>
+    
+    <div class="form-actions">
+        <a href="{% url 'admin:core_result_changelist' %}" class="btn-form btn-secondary">
+            ← Back to List
+        </a>
+        <button type="submit" form="result-form" class="btn-form btn-success">
+            💾 Save Result
+        </button>
+        {% if original %}
+        <button type="button" class="btn-form btn-primary" onclick="previewResult()">
+            👁️ Preview
+        </button>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Include the original admin form content -->
+{{ block.super }}
+{% endblock %}
+
+{% block extrajs %}
+{{ block.super }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Auto-calculate percentage when GPA changes
+        const gpaField = document.getElementById('id_gpa');
+        const percentageField = document.getElementById('id_percentage');
+        const totalField = document.getElementById('id_total');
+        
+        if (gpaField && percentageField) {
+            gpaField.addEventListener('input', function() {
+                const gpa = parseFloat(this.value) || 0;
+                const percentage = (gpa / 4.0) * 100;
+                percentageField.value = percentage.toFixed(2);
+                
+                // Update display
+                document.getElementById('gpa-display').textContent = gpa.toFixed(2);
+                document.getElementById('percentage-display').textContent = percentage.toFixed(2) + '%';
+                
+                // Update grade
+                const grade = getGradeFromGPA(gpa);
+                document.getElementById('grade-display').textContent = grade;
+            });
+        }
+        
+        // Auto-calculate total when individual subject marks change
+        const subjectInputs = document.querySelectorAll('input[name*="theory_marks"], input[name*="practical_marks"]');
+        subjectInputs.forEach(input => {
+            input.addEventListener('input', calculateTotal);
+        });
+        
+        // Initialize calculations
+        if (gpaField) {
+            gpaField.dispatchEvent(new Event('input'));
+        }
+        calculateTotal();
+    });
+    
+    function getGradeFromGPA(gpa) {
+        if (gpa >= 3.6) return 'A+';
+        if (gpa >= 3.0) return 'A';
+        if (gpa >= 2.4) return 'B+';
+        if (gpa >= 2.0) return 'B';
+        if (gpa >= 1.6) return 'C+';
+        if (gpa >= 1.2) return 'C';
+        if (gpa >= 0.8) return 'D';
+        return 'E';
+    }
+    
+    function calculateTotal() {
+        const subjectInputs = document.querySelectorAll('input[name*="theory_marks"], input[name*="practical_marks"]');
+        let total = 0;
+        
+        subjectInputs.forEach(input => {
+            const value = parseFloat(input.value) || 0;
+            total += value;
+        });
+        
+        const totalField = document.getElementById('id_total');
+        if (totalField) {
+            totalField.value = total;
+            document.getElementById('total-display').textContent = total;
+        }
+    }
+    
+    function previewResult() {
+        // Open result preview in new window
+        const resultId = '{{ original.id }}';
+        if (resultId) {
+            window.open(`/results/preview/${resultId}/`, '_blank');
+        }
+    }
+</script>
+{% endblock %} 

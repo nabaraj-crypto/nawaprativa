@@ -1,0 +1,55 @@
+services:
+  # A Django web service
+  - type: web
+    name: nawaprativa-school
+    runtime: python
+    buildCommand: ./build.sh
+    startCommand: gunicorn backend.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DB_NAME
+        fromDatabase:
+          name: nawaprativa_db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: nawaprativa_db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: nawaprativa_db
+          property: password
+      - key: DB_HOST
+        fromDatabase:
+          name: nawaprativa_db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: nawaprativa_db
+          property: port
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: EMAIL_HOST
+        sync: false
+      - key: EMAIL_PORT
+        sync: false
+      - key: EMAIL_USE_TLS
+        sync: false
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: DEFAULT_FROM_EMAIL
+        sync: false
+
+# A PostgreSQL database
+databases:
+  - name: nawaprativa_db
+    databaseName: nawaprativa_db
+    user: nawaprativa_user
+    plan: free

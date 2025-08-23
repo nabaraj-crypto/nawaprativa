@@ -1,0 +1,61 @@
+/* Custom Admin Login Page Styles for Nawa Prativa School */
+.login-page, body.login-page {
+    background: #f5f6fa !important;
+}
+.login-logo img, .brand-image {
+    max-width: 120px !important;
+    border-radius: 50%;
+    background: #fff;
+    padding: 8px;
+    box-shadow: 0 2px 12px #2F80ED22;
+    margin-bottom: 1.2rem;
+}
+.login-box, .card {
+    border-radius: 18px !important;
+    box-shadow: 0 2px 16px #2F80ED22 !important;
+    border: none !important;
+}
+.login-box-body, .card-body {
+    background: #fff !important;
+    border-radius: 18px !important;
+    padding: 2.2rem 2rem 1.5rem 2rem !important;
+}
+.login-logo, .brand-link {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2F80ED !important;
+    letter-spacing: 1px;
+}
+.btn-primary, .btn-primary:active, .btn-primary:focus {
+    background: #2F80ED !important;
+    border: none !important;
+    box-shadow: 0 2px 8px #2F80ED22 !important;
+    font-weight: 600;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    padding: 0.7em 2em;
+    transition: background 0.18s;
+}
+.btn-primary:hover {
+    background: #1c5db6 !important;
+}
+input.form-control, input[type="text"], input[type="password"] {
+    border-radius: 8px !important;
+    border: 1.5px solid #2F80ED33 !important;
+    padding: 0.7em 1em !important;
+    font-size: 1.08em;
+}
+.invalid-feedback, .errorlist {
+    color: #e74c3c !important;
+    font-size: 1em;
+    margin-top: 0.5em;
+}
+@media (max-width: 600px) {
+    .login-box, .card {
+        padding: 1.2rem 0.5rem !important;
+    }
+    .login-logo img {
+        max-width: 80px !important;
+    }
+} 

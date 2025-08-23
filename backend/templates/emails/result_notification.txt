@@ -1,0 +1,98 @@
+================================================================================
+                    NAWA PRATIVA SCHOOL
+              Excellence in Education, Character, and Leadership
+================================================================================
+
+                    ACADEMIC EXCELLENCE REPORT
+================================================================================
+
+Dear {{ student.full_name }} and Family,
+
+We are delighted to share your academic performance for the {{ exam_type }} examination 
+of the academic year {{ academic_year }}. Your dedication and hard work have yielded 
+outstanding results that reflect your commitment to excellence.
+
+================================================================================
+                           STUDENT INFORMATION
+================================================================================
+
+Full Name: {{ student.full_name }}
+Symbol Number: {{ student.symbol_number }}
+Class: {{ student.student_class }}
+Report Date: {{ generated_date }}
+
+================================================================================
+                        ACADEMIC PERFORMANCE SUMMARY
+================================================================================
+
+🎓 Overall GPA: {{ gpa|floatformat:2 }}
+📊 Percentage: {{ percentage|floatformat:1 }}%
+🏆 Total Marks: {{ total_obtained }}/{{ total_marks }}
+📚 Subjects Passed: {{ passed_subjects }}/{{ total_subjects }}
+📖 Total Subjects: {{ total_subjects }}
+
+================================================================================
+                           OVERALL RESULT
+================================================================================
+
+Overall Result: {{ overall_result }}
+
+{% if percentage >= 90 %}
+🏅 Achievement: Outstanding Performance
+{% elif percentage >= 80 %}
+🥇 Achievement: Excellent Achievement
+{% elif percentage >= 70 %}
+🥈 Achievement: Very Good Performance
+{% elif percentage >= 60 %}
+🥉 Achievement: Good Performance
+{% elif percentage >= 40 %}
+✅ Achievement: Satisfactory
+{% endif %}
+
+{% if gpa >= 3.5 %}
+⭐ Academic Excellence Award
+{% elif gpa >= 3.0 %}
+🌟 High Achievement Recognition
+{% elif gpa >= 2.5 %}
+📈 Good Academic Standing
+{% endif %}
+
+================================================================================
+                           MESSAGE FROM SCHOOL
+================================================================================
+
+Your consistent effort and dedication to learning have been truly commendable. 
+We encourage you to maintain this momentum and continue striving for academic excellence. 
+Remember, education is the key to unlocking your full potential.
+
+If you have any questions about your results or would like to discuss your academic progress, 
+please don't hesitate to contact your class teacher or the school administration. 
+We are here to support your continued success.
+
+{% if result_url %}
+================================================================================
+                        DETAILED RESULT CARD
+================================================================================
+
+For a detailed view of your result card with subject-wise breakdown, please visit:
+{{ result_url }}
+{% endif %}
+
+================================================================================
+                           CONTACT INFORMATION
+================================================================================
+
+🏫 Nawa Prativa School
+📧 Email: nawaprativaschool@gmail.com
+📞 Phone: +977-9761696109
+📍 Location: Bhakundebeshi, Kavreplanchok, Nepal
+
+================================================================================
+                           FOOTER
+================================================================================
+
+This academic report is generated with care and attention to detail. 
+We celebrate your achievements and look forward to your continued success.
+
+Excellence in Education, Character, and Leadership
+================================================================================ 

@@ -1,0 +1,221 @@
+[
+    {
+        "roll": 1,
+        "name": "Pratima Tamang",
+        "grade": "6",
+        "year": "2078",
+        "subjects": [
+            {
+                "subject": "Nepali",
+                "credit_hour": 5,
+                "internal": { "point": 3.6, "grade": "A" },
+                "external": { "point": 2.8, "grade": "B" },
+                "final": { "point": 3.2, "grade": "B+" },
+                "remarks": "Pass"
+            },
+            {
+                "subject": "Mathematics",
+                "credit_hour": 5,
+                "internal": { "point": 3.2, "grade": "B+" },
+                "external": { "point": 4.0, "grade": "A+" },
+                "final": { "point": 3.6, "grade": "A" },
+                "remarks": "Pass"
+            },
+            {
+                "subject": "English",
+                "credit_hour": 4,
+                "internal": { "point": 3.8, "grade": "A" },
+                "external": { "point": 3.6, "grade": "A" },
+                "final": { "point": 3.7, "grade": "A" },
+                "remarks": "Pass"
+            },
+            {
+                "subject": "Science",
+                "credit_hour": 5,
+                "internal": { "point": 3.4, "grade": "B+" },
+                "external": { "point": 3.2, "grade": "B+" },
+                "final": { "point": 3.3, "grade": "B+" },
+                "remarks": "Pass"
+            },
+            {
+                "subject": "Social Studies",
+                "credit_hour": 4,
+                "internal": { "point": 3.0, "grade": "B" },
+                "external": { "point": 2.8, "grade": "B" },
+                "final": { "point": 2.9, "grade": "B" },
+                "remarks": "Pass"
+            }
+        ],
+        "gpa": 3.48
+    },
+    {
+        "roll": 2,
+        "name": "Rajesh Karki",
+        "grade": "6",
+        "year": "2078",
+        "subjects": [
+            {
+                "subject": "Nepali",
+                "credit_hour": 5,
+                "internal": { "point": 2.8, "grade": "B" },
+                "external": { "point": 2.4, "grade": "C+" },
+                "final": { "point": 2.6, "grade": "B-" },
+                "remarks": "Pass"
+            },
+            {
+                "subject": "Mathematics",
+                "credit_hour": 5,
+                "internal": { "point": 3.0, "grade": "B" },
+                "external": { "point": 2.8, "grade": "B" },
+                "final": { "point": 2.9, "grade": "B" },
+                "remarks": "Pass"
+            },
+            {
+                "subject": "English",
+                "credit_hour": 4,
+                "internal": { "point": 2.6, "grade": "B-" },
+                "external": { "point": 2.4, "grade": "C+" },
+                "final": { "point": 2.5, "grade": "C+" },
+                "remarks": "Pass"
+            },
+            {
+                "subject": "Science",
+                "credit_hour": 5,
+                "internal": { "point": 2.8, "grade": "B" },
+                "external": { "point": 2.6, "grade": "B-" },
+                "final": { "point": 2.7, "grade": "B-" },
+                "remarks": "Pass"
+            },
+            {
+                "subject": "Social Studies",
+                "credit_hour": 4,
+                "internal": { "point": 2.4, "grade": "C+" },
+                "external": { "point": 2.2, "grade": "C" },
+                "final": { "point": 2.3, "grade": "C" },
+                "remarks": "Pass"
+            }
+        ],
+        "gpa": 2.64
+    },
+    {
+        "roll": 3,
+        "name": "Sita Sharma",
+        "grade": "6",
+        "year": "2078",
+        "subjects": [
+            {
+                "subject": "Nepali",
+                "credit_hour": 5,
+                "internal": { "point": 4.0, "grade": "A+" },
+                "external": { "point": 3.8, "grade": "A" },
+                "final": { "point": 3.9, "grade": "A+" },
+                "remarks": "Pass"
+            },
+            {
+                "subject": "Mathematics",
+                "credit_hour": 5,
+                "internal": { "point": 3.8, "grade": "A" },
+                "external": { "point": 4.0, "grade": "A+" },
+                "final": { "point": 3.9, "grade": "A+" },
+                "remarks": "Pass"
+            },
+            {
+                "subject": "English",
+                "credit_hour": 4,
+                "internal": { "point": 3.6, "grade": "A" },
+                "external": { "point": 3.8, "grade": "A" },
+                "final": { "point": 3.7, "grade": "A" },
+                "remarks": "Pass"
+            },
+            {
+                "subject": "Science",
+                "credit_hour": 5,
+                "internal": { "point": 3.8, "grade": "A" },
+                "external": { "point": 3.6, "grade": "A" },
+                "final": { "point": 3.7, "grade": "A" },
+                "remarks": "Pass"
+            },
+            {
+                "subject": "Social Studies",
+                "credit_hour": 4,
+                "internal": { "point": 3.6, "grade": "A" },
+                "external": { "point": 3.8, "grade": "A" },
+                "final": { "point": 3.7, "grade": "A" },
+                "remarks": "Pass"
+            }
+        ],
+        "gpa": 3.78
+    },
+    {
+        "roll": 4,
+        "name": "Prakash Gurung",
+        "class": 10,
+        "english": 75,
+        "math": 82,
+        "science": 78,
+        "computer": 80,
+        "total": 315,
+        "grade": "B+",
+        "remarks": "Pass"
+    },
+    {
+        "roll": 5,
+        "name": "Sita Tamang",
+        "class": 10,
+        "english": 92,
+        "math": 95,
+        "science": 90,
+        "computer": 93,
+        "total": 370,
+        "grade": "A+",
+        "remarks": "Pass"
+    },
+    {
+        "roll": 6,
+        "name": "Mina Shrestha",
+        "class": 10,
+        "english": 88,
+        "math": 85,
+        "science": 90,
+        "computer": 87,
+        "total": 350,
+        "grade": "A",
+        "remarks": "Pass"
+    },
+    {
+        "roll": 7,
+        "name": "Dipak Rai",
+        "class": 10,
+        "english": 65,
+        "math": 68,
+        "science": 72,
+        "computer": 70,
+        "total": 275,
+        "grade": "B",
+        "remarks": "Pass"
+    },
+    {
+        "roll": 8,
+        "name": "Sabina Magar",
+        "class": 10,
+        "english": 78,
+        "math": 75,
+        "science": 80,
+        "computer": 77,
+        "total": 310,
+        "grade": "B+",
+        "remarks": "Pass"
+    },
+    {
+        "roll": 9,
+        "name": "Ramesh Basnet",
+        "class": 10,
+        "english": 40,
+        "math": 35,
+        "science": 42,
+        "computer": 38,
+        "total": 155,
+        "grade": "D+",
+        "remarks": "Pass"
+    }
+] 

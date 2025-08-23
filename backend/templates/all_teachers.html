@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Teachers | Online Homework System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/homework-ui.css' %}">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+      body { font-family: 'Inter', 'Poppins', Arial, sans-serif; background: #F5F6FA; margin: 0; }
+      .table-container { max-width: 1200px; margin: 2.5rem auto; background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(47,128,237,0.07); padding: 2rem; }
+      h2 { color: #2F80ED; margin-bottom: 1.5rem; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { padding: 0.7rem 1rem; border-bottom: 1px solid #eee; text-align: left; }
+      th { background: #F5F6FA; color: #2F80ED; font-weight: 600; }
+      tr:last-child td { border-bottom: none; }
+      @media (max-width: 900px) { .table-container { padding: 0.5rem; } th, td { padding: 0.5rem 0.3rem; font-size: 0.97rem; } }
+    </style>
+</head>
+<body>
+  <div class="table-container">
+    <h2>All Teachers</h2>
+    <table id="teachersTable">
+      <thead>
+        <tr>
+          <th>Name</th><th>Subject</th><th>School</th><th>Position</th><th>Contact</th><th>Blood Group</th><th>Experience</th><th>Education</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <script>
+    feather.replace();
+    fetch('/api/all-teachers/')
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.querySelector('#teachersTable tbody');
+        tbody.innerHTML = '';
+        data.forEach(t => {
+          tbody.innerHTML += `<tr>
+            <td>${t.full_name}</td>
+            <td>${t.subject}</td>
+            <td>${t.school_name || ''}</td>
+            <td>${t.position || ''}</td>
+            <td>${t.contact_number || ''}</td>
+            <td>${t.blood_group || ''}</td>
+            <td>${t.experience || ''}</td>
+            <td>${t.education || ''}</td>
+          </tr>`;
+        });
+      });
+  </script>
+</body>
+</html> 

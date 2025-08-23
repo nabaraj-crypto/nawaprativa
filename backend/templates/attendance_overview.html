@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<style>
+    body { background: #f5f6fa; }
+    .main-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .header-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0.8rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .logo-img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        object-fit: cover;
+        background-color: #fff;
+        padding: 3px;
+        transition: all 0.3s ease;
+        filter: brightness(1.05) contrast(1.05);
+    }
+    @media (max-width: 768px) {
+        .logo-img { width: 100px; height: 100px; border-width: 2px; }
+    }
+    @media (max-width: 480px) {
+        .logo-img { width: 80px; height: 80px; border-width: 2px; padding: 2px; }
+    }
+    .coming-soon-container {
+        max-width: 500px;
+        margin: 8.5rem auto 0 auto;
+        background: #fff;
+        border-radius: 22px;
+        box-shadow: 0 8px 32px #2F80ED22;
+        padding: 3rem 2.2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    @media (max-width: 900px) {
+        .coming-soon-container { margin-top: 7.5rem; }
+    }
+    @media (max-width: 600px) {
+        .coming-soon-container { margin-top: 6.5rem; }
+    }
+    .coming-soon-title { font-size: 2.2rem; font-weight: 700; color: #2F80ED; margin-bottom: 1.2rem; }
+    .coming-soon-desc { font-size: 1.2rem; color: #444; margin-bottom: 2.2rem; }
+    .loader {
+      display: inline-block;
+      width: 80px;
+      height: 80px;
+      border: 8px solid #e3eafc;
+      border-top: 8px solid #2F80ED;
+      border-radius: 50%;
+      animation: spin 1.2s linear infinite;
+      margin-bottom: 2rem;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .soon-anim {
+      font-size: 2.5rem;
+      color: #2F80ED;
+      animation: bounce 1.2s infinite alternate;
+      margin-bottom: 1.2rem;
+    }
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-18px); }
+    }
+</style>
+{% endblock %}
+{% block content %}
+<!-- Bootstrap Navbar Start -->
+<!-- Bootstrap Navbar End -->
+<div class="coming-soon-container">
+    <div class="loader"></div>
+    <div class="soon-anim">🚀</div>
+    <div class="coming-soon-title">Attendance Feature Coming Soon!</div>
+    <div class="coming-soon-desc">
+        We’re working hard to bring you a modern, powerful attendance system.<br>
+        <span style="color:#2F80ED; font-weight:600;">Stay tuned for updates!</span>
+    </div>
+</div>
+<script>
+$(function() {
+    $('#logoutBtnApi').on('click', function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: '/api/logout/',
+            type: 'POST',
+            headers: { 'X-CSRFToken': (document.cookie.match('(^|;)\\s*csrftoken\\s*=\\s*([^;]+)')||[])[2] },
+            success: function() {
+                window.location.href = '/';
+            },
+            error: function() {
+                alert('Logout failed. Please try again.');
+            }
+        });
+    });
+});
+// Dropdown submenu click for mobile
+$(function() {
+    $('.dropdown-submenu > .dropdown-toggle').on('click', function(e) {
+        e.preventDefault();
+        var submenu = $(this).next('.dropdown-menu');
+        $('.dropdown-submenu .dropdown-menu').not(submenu).hide();
+        submenu.toggle();
+        e.stopPropagation();
+    });
+});
+</script>
+{% endblock %} 

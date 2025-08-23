@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Student Login | Nawa Prativa{% endblock %}
+{% block extra_head %}
+<style>
+body { background: #f5f6fa; }
+.login-container { max-width: 420px; margin: 5% auto; background: #fff; border-radius: 18px; box-shadow: 0 4px 24px #2F80ED22; padding: 2.5rem 2.2rem 2rem 2.2rem; position: relative; }
+.login-logo { display: block; margin: 0 auto 1.2rem auto; width: 70px; height: 70px; border-radius: 50%; object-fit: cover; background: #fff; box-shadow: 0 2px 8px #2F80ED22; }
+.login-title { font-size: 2.1rem; font-weight: 700; color: #2F80ED; text-align: center; margin-bottom: 0.7rem; }
+.login-subtitle { text-align: center; color: #888; margin-bottom: 1.5rem; font-size: 1.08rem; }
+.form-label { font-weight: 600; }
+.btn-primary { background: #2F80ED; border: none; font-weight: 600; border-radius: 8px; margin-top: 0.5rem; }
+.btn-primary:hover { background: #1c5db6; }
+.msg { margin-top: 1.2rem; text-align: center; font-weight: 600; }
+.show-password-toggle { position: absolute; right: 1.2rem; top: 2.2rem; cursor: pointer; color: #888; font-size: 1.1rem; }
+@media (max-width: 600px) { .login-container { padding: 1.2rem 0.7rem; } }
+</style>
+{% endblock %}
+{% block content %}
+<div class="login-container position-relative">
+    <img src="{% static 'images/gallery/schoolslogo.jpg' %}" alt="School Logo" class="login-logo">
+    <div class="login-title">Login</div>
+    <div class="login-subtitle">Sign in with your username and password.</div>
+    <form id="loginForm" method="post" autocomplete="off">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" name="username" required autofocus>
+        </div>
+        <div class="mb-3 position-relative">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+            <span class="show-password-toggle" id="togglePassword" title="Show/Hide Password"><i class="fas fa-eye"></i></span>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
+    {% if msg %}
+    <div class="alert alert-danger msg">{{ msg }}</div>
+    {% endif %}
+    <div class="text-center mt-3">
+        <a href="/student-signup/" class="text-decoration-none" style="color:#2F80ED;">Don't have an account? Sign Up</a>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+<script>
+$(function() {
+    $('#togglePassword').on('click', function() {
+        var input = $('#password');
+        var icon = $(this).find('i');
+        if (input.attr('type') === 'password') {
+            input.attr('type', 'text');
+            icon.removeClass('fa-eye').addClass('fa-eye-slash');
+        } else {
+            input.attr('type', 'password');
+            icon.removeClass('fa-eye-slash').addClass('fa-eye');
+        }
+    });
+});
+</script>
+{% endblock %} 

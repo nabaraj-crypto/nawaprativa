@@ -1,0 +1,33 @@
+[
+    {
+        "name": "Dr. Sarah Johnson",
+        "subject": "Mathematics",
+        "photoURL": "images/faculty/sarah-johnson.jpg"
+    },
+    {
+        "name": "Prof. Michael Chen",
+        "subject": "Physics",
+        "photoURL": "images/faculty/michael-chen.jpg"
+    },
+    {
+        "name": "Dr. Emily Rodriguez",
+        "subject": "English Literature",
+        "photoURL": "images/faculty/emily-rodriguez.jpg"
+    },
+    {
+        "name": "Prof. David Kim",
+        "subject": "Computer Science",
+        "photoURL": "images/faculty/david-kim.jpg"
+    },
+    {
+        "name": "Dr. Lisa Patel",
+        "subject": "Biology",
+        "photoURL": "images/faculty/lisa-patel.jpg"
+    }
+    ,
+    {
+        "name": "Nabaraj kc",
+        "subject":"Maths",
+    "photoURL":"images/faculty/nabaraj-kc.jpg"
+    }
+] 

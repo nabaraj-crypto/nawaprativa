@@ -1,0 +1,380 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_head %}
+<style>
+  body { background: #F5F6FA; }
+  .dashboard-layout { display: flex; min-height: 100vh; }
+  .sidebar { background: #2F80ED; color: #fff; width: 230px; min-width: 180px; padding: 2rem 1rem 1rem 1rem; display: flex; flex-direction: column; gap: 2rem; }
+  .sidebar .logo { font-size: 1.3rem; font-weight: 700; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.7rem; }
+  .sidebar .logo img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; background: #fff; }
+  .sidebar .user-info { text-align: center; margin-bottom: 2rem; }
+  .sidebar .user-avatar { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-bottom: 0.7rem; border: 2px solid #fff; background: #fff; }
+  .sidebar .user-name { font-weight: 700; font-size: 1.1rem; }
+  .sidebar .user-role { font-size: 0.98rem; color: #cce0ff; }
+  .sidebar nav ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1.2rem; }
+  .sidebar nav a { color: #fff; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 0.7rem; font-size: 1.08rem; padding: 0.5rem 0.7rem; border-radius: 8px; transition: background 0.18s; }
+  .sidebar nav a.active, .sidebar nav a:hover { background: #1c5db6; }
+  .main-panel { flex: 1; padding: 2.5rem 2rem; background: #F5F6FA; min-width: 0; }
+  .dashboard-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .dashboard-header h2 { margin: 0; font-size: 2rem; font-weight: 700; }
+  .status-form-card, .homework-form-card, .feed-card { border-radius: 18px; box-shadow: 0 4px 24px rgba(52,152,219,0.10); }
+  .feed-avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; background: #e3eafc; margin-right: 1rem; }
+  .feed-post { margin-bottom: 1.5rem; }
+  .feed-post:last-child { margin-bottom: 0; }
+  .like-btn, .comment-btn { border: none; background: none; color: #2F80ED; font-size: 1.2rem; margin-right: 1.2rem; cursor: pointer; transition: color 0.18s; }
+  .like-btn.liked { color: #e0245e; }
+  .comment-btn:focus, .like-btn:focus { outline: none; }
+  .feed-img { max-width: 100%; border-radius: 12px; margin-top: 0.7rem; }
+  @media (max-width: 900px) { .dashboard-layout { flex-direction: column; } .sidebar { width: 100%; flex-direction: row; gap: 1rem; padding: 1rem; } .main-panel { padding: 1rem; } }
+</style>
+{% endblock %}
+{% block content %}
+<div class="dashboard-layout">
+  <aside class="sidebar">
+    <div class="logo"><img src="{% static 'images/gallery/schoolslogo.jpg' %}" alt="Logo"> HomeworkSys</div>
+    <div class="user-info">
+      <img src="{% if user.student_profile and user.student_profile.profile_photo %}{{ user.student_profile.profile_photo.url }}{% else %}{% static 'images/avatar-default.png' %}{% endif %}" class="user-avatar" alt="Avatar">
+      <div class="user-name">{{ user.get_full_name|default:user.username|default:'Anonymous' }}</div>
+      <div class="user-role">Student</div>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/dashboard/" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a href="#" id="notesLink"><i class="fas fa-file-alt"></i> Notes & PDFs</a></li>
+        <li><a href="/profile/"><i class="fas fa-user"></i> Profile</a></li>
+        <li><a href="/my-details/"><i class="fas fa-id-card"></i> My Details</a></li>
+        <li><a href="/homework/"><i class="fas fa-book"></i> Homework</a></li>
+        <li><a href="/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+      </ul>
+    </nav>
+  </aside>
+  <main class="main-panel">
+    <div class="dashboard-header">
+      <h2>Welcome, {{ user.get_full_name|default:user.username|default:'Student' }}!</h2>
+    </div>
+    <div class="dashboard-section">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="card status-form-card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Post a Status Update</h5>
+              <form method="post" enctype="multipart/form-data" id="statusForm">
+                {% csrf_token %}
+                <textarea class="form-control mb-2" name="status_text" rows="2" placeholder="What's on your mind?"></textarea>
+                <input type="file" name="status_image" class="form-control mb-2">
+                <button class="btn btn-primary" type="submit">Post</button>
+              </form>
+            </div>
+          </div>
+          <!-- Friend Search Section -->
+          <div class="card friend-search-card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Find Friends</h5>
+              <div class="input-group mb-3">
+                <input type="text" id="friendSearchInput" class="form-control" placeholder="Search by name...">
+                <button class="btn btn-primary" id="friendSearchBtn" type="button">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+              <div id="friendSearchResults" class="list-group mt-2" style="max-height: 300px; overflow-y: auto;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card homework-form-card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Upload Homework</h5>
+              <form method="post" enctype="multipart/form-data" id="homeworkForm">
+                {% csrf_token %}
+                <input type="file" name="homework_file" class="form-control mb-2">
+                <button class="btn btn-success" type="submit">Upload</button>
+              </form>
+            </div>
+          </div>
+          <!-- Friend Suggestions Section -->
+          <div class="card friend-suggestions-card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Friend Suggestions</h5>
+              <div id="friendSuggestions" class="list-group">
+                <div class="d-flex justify-content-center my-3">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card feed-card mb-4" id="notesCard" style="display:none;">
+        <div class="card-body">
+          <h5 class="card-title">Notes, Question Papers and PDFs</h5>
+          <div class="row g-3 mb-3">
+            <div class="col-md-3"><input id="resQuery" class="form-control" placeholder="Search topic or tag"></div>
+            <div class="col-md-3">
+              <select id="resClass" class="form-control">
+                <option value="">All Classes</option>
+                {% for c in '1,2,3,4,5,6,7,8,9,10,11,12'.split(',') %}
+                <option value="{{ c }}">Class {{ c }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-3"><input id="resSubject" class="form-control" placeholder="Subject (optional)"></div>
+            <div class="col-md-3 d-grid"><button id="resSearchBtn" class="btn btn-primary"><i class="fas fa-search"></i> Search</button></div>
+          </div>
+          <div id="resList" class="list-group"></div>
+        </div>
+      </div>
+      <div class="card feed-card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Recent Posts & Status Updates</h5>
+          <div id="feedList">
+            {% if feed %}
+              {% for item in feed %}
+                <div class="feed-post">
+                  <div class="d-flex align-items-center mb-2">
+                    <img src="{% if item.user.student_profile and item.user.student_profile.profile_photo %}{{ item.user.student_profile.profile_photo.url }}{% elif item.user.teacher_profile and item.user.teacher_profile.photo %}{{ item.user.teacher_profile.photo.url }}{% else %}{% static 'images/avatar-default.png' %}{% endif %}" class="feed-avatar" alt="avatar">
+                    <div>
+                      <div class="fw-semibold">{{ item.user.get_full_name|default:item.user.username }}</div>
+                      <div class="text-muted small">{{ item.created_at|date:'M d, Y H:i' }}</div>
+                    </div>
+                  </div>
+                  {% if item.text %}<div class="mb-2">{{ item.text }}</div>{% endif %}
+                  {% if item.image %}<img src="{{ item.image.url }}" class="feed-img" alt="status image">{% endif %}
+                  <div class="mt-2">
+                    <button class="like-btn"><i class="fas fa-heart"></i> 0</button>
+                    <button class="comment-btn"><i class="fas fa-comment"></i> 0</button>
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="text-center text-muted">No posts yet. Start by posting a status update!</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+<script>
+  (function(){
+    const notesLink = document.getElementById('notesLink');
+    const notesCard = document.getElementById('notesCard');
+    const resList = document.getElementById('resList');
+    const resQuery = document.getElementById('resQuery');
+    const resClass = document.getElementById('resClass');
+    const resSubject = document.getElementById('resSubject');
+    const resSearchBtn = document.getElementById('resSearchBtn');
+    const friendSearchInput = document.getElementById('friendSearchInput');
+    const friendSearchBtn = document.getElementById('friendSearchBtn');
+    const friendSearchResults = document.getElementById('friendSearchResults');
+    const friendSuggestions = document.getElementById('friendSuggestions');
+
+    // Initialize friend suggestions on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      fetchFriendSuggestions();
+    });
+
+    function toggleNotes(){
+      if(!notesCard) return;
+      notesCard.style.display = notesCard.style.display === 'none' ? 'block' : 'none';
+      if(notesCard.style.display === 'block') fetchResources();
+    }
+
+    async function fetchResources(){
+      const params = new URLSearchParams();
+      if(resQuery.value.trim()) params.append('q', resQuery.value.trim());
+      if(resClass.value) params.append('class', resClass.value);
+      if(resSubject.value.trim()) params.append('subject_name', resSubject.value.trim());
+      try{
+        const resp = await fetch(`/api/resources/?${params.toString()}`);
+        if(!resp.ok) throw new Error('Failed to fetch resources');
+        const data = await resp.json();
+        renderResources(data);
+      }catch(e){
+        resList.innerHTML = '<div class="list-group-item text-danger">Failed to load resources.</div>';
+      }
+    }
+
+    // Friend Search Functionality
+    async function searchFriends() {
+      const query = friendSearchInput.value.trim();
+      if (!query) return;
+      
+      try {
+        friendSearchResults.innerHTML = '<div class="d-flex justify-content-center my-3"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+        
+        const resp = await fetch(`/api/search-friends/?q=${encodeURIComponent(query)}`);
+        if (!resp.ok) throw new Error('Failed to search friends');
+        
+        const data = await resp.json();
+        renderFriendSearchResults(data);
+      } catch (e) {
+        friendSearchResults.innerHTML = '<div class="list-group-item text-danger">Failed to search friends.</div>';
+      }
+    }
+
+    function renderFriendSearchResults(users) {
+      friendSearchResults.innerHTML = '';
+      
+      if (!Array.isArray(users) || users.length === 0) {
+        friendSearchResults.innerHTML = '<div class="list-group-item text-center">No users found</div>';
+        return;
+      }
+      
+      users.forEach(user => {
+        const item = document.createElement('div');
+        item.className = 'list-group-item d-flex justify-content-between align-items-center';
+        
+        const userInfo = document.createElement('div');
+        userInfo.className = 'd-flex align-items-center';
+        
+        const avatar = document.createElement('img');
+        avatar.src = user.profile_photo || '{% static "images/avatar-default.png" %}';
+        avatar.className = 'rounded-circle me-2';
+        avatar.style.width = '40px';
+        avatar.style.height = '40px';
+        avatar.alt = 'User Avatar';
+        
+        const name = document.createElement('div');
+        name.textContent = user.full_name || user.username;
+        
+        userInfo.appendChild(avatar);
+        userInfo.appendChild(name);
+        
+        const followBtn = document.createElement('button');
+        followBtn.className = user.is_following ? 'btn btn-sm btn-outline-primary' : 'btn btn-sm btn-primary';
+        followBtn.textContent = user.is_following ? 'Following' : 'Follow';
+        followBtn.dataset.userId = user.id;
+        followBtn.addEventListener('click', () => toggleFollow(user.id, followBtn));
+        
+        item.appendChild(userInfo);
+        item.appendChild(followBtn);
+        
+        friendSearchResults.appendChild(item);
+      });
+    }
+
+    // Friend Suggestions Functionality
+    async function fetchFriendSuggestions() {
+      try {
+        const resp = await fetch('/api/friend-suggestions/');
+        if (!resp.ok) throw new Error('Failed to fetch friend suggestions');
+        
+        const data = await resp.json();
+        renderFriendSuggestions(data);
+      } catch (e) {
+        friendSuggestions.innerHTML = '<div class="list-group-item text-danger">Failed to load suggestions.</div>';
+      }
+    }
+
+    function renderFriendSuggestions(users) {
+      friendSuggestions.innerHTML = '';
+      
+      if (!Array.isArray(users) || users.length === 0) {
+        friendSuggestions.innerHTML = '<div class="list-group-item text-center">No suggestions available</div>';
+        return;
+      }
+      
+      users.forEach(user => {
+        const item = document.createElement('div');
+        item.className = 'list-group-item d-flex justify-content-between align-items-center';
+        
+        const userInfo = document.createElement('div');
+        userInfo.className = 'd-flex align-items-center';
+        
+        const avatar = document.createElement('img');
+        avatar.src = user.profile_photo || '{% static "images/avatar-default.png" %}';
+        avatar.className = 'rounded-circle me-2';
+        avatar.style.width = '40px';
+        avatar.style.height = '40px';
+        avatar.alt = 'User Avatar';
+        
+        const name = document.createElement('div');
+        name.textContent = user.full_name || user.username;
+        
+        userInfo.appendChild(avatar);
+        userInfo.appendChild(name);
+        
+        const followBtn = document.createElement('button');
+        followBtn.className = 'btn btn-sm btn-primary';
+        followBtn.textContent = 'Follow';
+        followBtn.dataset.userId = user.id;
+        followBtn.addEventListener('click', () => toggleFollow(user.id, followBtn));
+        
+        item.appendChild(userInfo);
+        item.appendChild(followBtn);
+        
+        friendSuggestions.appendChild(item);
+      });
+    }
+
+    // Toggle follow/unfollow functionality
+    async function toggleFollow(userId, button) {
+      try {
+        const resp = await fetch('/api/toggle-follow/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          body: JSON.stringify({ user_id: userId })
+        });
+        
+        if (!resp.ok) throw new Error('Failed to toggle follow status');
+        
+        const data = await resp.json();
+        
+        if (data.is_following) {
+          button.textContent = 'Following';
+          button.className = 'btn btn-sm btn-outline-primary';
+        } else {
+          button.textContent = 'Follow';
+          button.className = 'btn btn-sm btn-primary';
+        }
+      } catch (e) {
+        console.error('Error toggling follow status:', e);
+      }
+    }
+
+    // Event listeners
+    if (friendSearchBtn) {
+      friendSearchBtn.addEventListener('click', searchFriends);
+    }
+    
+    if (friendSearchInput) {
+      friendSearchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          searchFriends();
+        }
+      });
+    }
+
+    function renderResources(items){
+      if(!Array.isArray(items) || items.length === 0){
+        resList.innerHTML = '<div class="list-group-item text-muted">No resources found.</div>';
+        return;
+      }
+      resList.innerHTML = items.map(it => {
+        const tag = (it.is_question_paper ? 'Question Paper' : 'Note/PDF');
+        const cls = it.class_name ? `Class ${it.class_name}` : '';
+        const subj = it.subject_name || '';
+        return `
+          <a href="${it.file}" class="list-group-item list-group-item-action" target="_blank">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">${it.title}</h6>
+              <small>${tag}</small>
+            </div>
+            <small>${[cls, subj].filter(Boolean).join(' • ')}</small>
+            ${it.description ? `<p class="mb-1">${it.description}</p>` : ''}
+          </a>`;
+      }).join('');
+    }
+
+    if(notesLink){ notesLink.addEventListener('click', (e)=>{ e.preventDefault(); toggleNotes(); }); }
+    if(resSearchBtn){ resSearchBtn.addEventListener('click', fetchResources); }
+  })();
+</script>
+</div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}

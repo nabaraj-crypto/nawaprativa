@@ -1,0 +1,393 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block title %}Notes & PDFs{% endblock %}
+
+{% block extra_css %}
+<style>
+  .resource-header {
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    background-size: 200% 200%;
+    animation: gradientAnimation 15s ease infinite;
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  @keyframes gradientAnimation {
+    0% { background-position: 0% 50% }
+    50% { background-position: 100% 50% }
+    100% { background-position: 0% 50% }
+  }
+  
+  .search-container {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-top: -2.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    position: relative;
+    z-index: 10;
+    transition: all 0.3s ease;
+  }
+  
+  .search-container:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    transform: translateY(-3px);
+  }
+  
+  .resource-card {
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+    border: none;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  
+  .resource-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+  }
+  
+  .resource-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: #f8f9fa;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  
+  .resource-card .card-body {
+    padding: 1.25rem;
+  }
+  
+  .resource-tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+  }
+  
+  .resource-tag:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  .resource-tag.question-paper {
+    background: linear-gradient(45deg, #ff9a00, #ff6a00);
+    color: white;
+  }
+  
+  .resource-tag.note-pdf {
+    background: linear-gradient(45deg, #2196f3, #0d47a1);
+    color: white;
+  }
+  
+  .resource-meta {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    color: #6c757d;
+    font-size: 0.875rem;
+  }
+  
+  .resource-meta i {
+    margin-right: 0.5rem;
+  }
+  
+  .search-input {
+    border-radius: 50px;
+    padding-left: 1rem;
+    border: 1px solid #e0e0e0;
+  }
+  
+  .search-input:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    border-color: #86b7fe;
+  }
+  
+  .search-btn {
+    border-radius: 50px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 600;
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin-top: 2rem;
+  }
+  
+  .empty-state i {
+    font-size: 3rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+  }
+  
+  .empty-state p {
+    color: #6c757d;
+    font-size: 1.1rem;
+    margin-bottom: 0;
+  }
+  
+  @media (max-width: 768px) {
+    .resource-header {
+      padding: 2rem 0;
+    }
+    
+    .search-container {
+      margin-top: -1.5rem;
+      padding: 1rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Header -->
+<div class="resource-header text-center">
+  <div class="container">
+    <h1 class="display-4 fw-bold">Learning Resources</h1>
+    <p class="lead">Access notes, question papers, and educational materials</p>
+    <div class="mt-4">
+      <button id="resResetBtn" class="btn btn-light btn-lg">
+        <i class="fas fa-sync-alt me-2"></i>View All Resources
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Search Section -->
+  <div class="search-container">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+          <input id="resQuery" class="form-control search-input border-start-0" placeholder="Search by topic or tag">
+        </div>
+      </div>
+      <div class="col-md-3">
+        <select id="resClass" class="form-control search-input">
+          <option value="">All Classes</option>
+          {% with '1,2,3,4,5,6,7,8,9,10,11,12' as class_list %}{% for c in class_list|split:',' %}
+          <option value="{{ c }}">Class {{ c }}</option>
+          {% endfor %}{% endwith %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <input id="resSubject" class="form-control search-input" placeholder="Subject (optional)">
+      </div>
+      <div class="col-md-2 d-grid">
+        <button id="resSearchBtn" class="btn btn-primary search-btn"><i class="fas fa-search me-2"></i>Find</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Results Section -->
+  <div id="resList" class="mt-4"></div>
+</div>
+<script>
+  (function(){
+    const resList = document.getElementById('resList');
+    const resQuery = document.getElementById('resQuery');
+    const resClass = document.getElementById('resClass');
+    const resSubject = document.getElementById('resSubject');
+    
+    // Add loading animation
+    function showLoading() {
+      resList.innerHTML = `
+        <div class="d-flex flex-column align-items-center justify-content-center my-5">
+          <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="text-muted">Loading resources...</p>
+        </div>
+      `;
+    }
+    
+    // Show empty state with icon
+    function showEmptyState() {
+      resList.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-search"></i>
+          <h4>No resources found</h4>
+          <p>Try adjusting your search criteria or check back later for new materials.</p>
+          <button onclick="resetFilters()" class="btn btn-outline-primary mt-3">
+            <i class="fas fa-sync-alt me-2"></i>Reset Filters
+          </button>
+        </div>
+      `;
+    }
+    
+    // Reset all filters
+    function resetFilters() {
+      resQuery.value = '';
+      resClass.value = '';
+      resSubject.value = '';
+      fetchResources();
+    }
+    
+    // Show error state
+    function showError() {
+      resList.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-exclamation-circle text-danger" style="font-size: 3.5rem;"></i>
+          <h4 class="text-danger mt-3">Oops! Something went wrong</h4>
+          <p>We couldn't load the resources. Please try again later.</p>
+          <button onclick="fetchResources()" class="btn btn-danger mt-3">
+            <i class="fas fa-redo-alt me-2"></i>Try Again
+          </button>
+        </div>
+      `;
+    }
+    
+    // Format date string
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      });
+    }
+    
+    // Get icon based on file extension
+    function getFileIcon(fileUrl) {
+      if (!fileUrl) return 'fas fa-file';
+      
+      const extension = fileUrl.split('.').pop().toLowerCase();
+      
+      switch(extension) {
+        case 'pdf':
+          return 'fas fa-file-pdf';
+        case 'doc':
+        case 'docx':
+          return 'fas fa-file-word';
+        case 'xls':
+        case 'xlsx':
+          return 'fas fa-file-excel';
+        case 'ppt':
+        case 'pptx':
+          return 'fas fa-file-powerpoint';
+        case 'jpg':
+        case 'jpeg':
+        case 'png':
+        case 'gif':
+          return 'fas fa-file-image';
+        default:
+          return 'fas fa-file-alt';
+      }
+    }
+    
+    async function fetchResources(){
+      showLoading();
+      
+      const params = new URLSearchParams();
+      if(resQuery.value.trim()) params.append('q', resQuery.value.trim());
+      if(resClass.value) params.append('class', resClass.value);
+      if(resSubject.value.trim()) params.append('subject_name', resSubject.value.trim());
+      
+      try{
+        const resp = await fetch(`/api/resources/?${params.toString()}`);
+        if(!resp.ok) throw new Error('Failed');
+        const data = await resp.json();
+        
+        if(!Array.isArray(data) || !data.length){
+          showEmptyState();
+          return;
+        }
+        
+        // Create a row container for the cards
+        let html = '<div class="row">';
+        
+        // Generate cards for each resource
+        data.forEach(it => {
+          const tagClass = it.is_question_paper ? 'question-paper' : 'note-pdf';
+          const tagText = it.is_question_paper ? 'Question Paper' : 'Note/PDF';
+          const cls = it.class_name ? `Class ${it.class_name}` : '';
+          const subj = it.subject_name || '';
+          const fileIcon = getFileIcon(it.file);
+          
+          html += `
+            <div class="col-md-6 col-lg-4 mb-4">
+              <div class="resource-card card h-100">
+                <div class="card-header">
+                  <h5 class="card-title mb-0">${it.title}</h5>
+                  <span class="resource-tag ${tagClass}">${tagText}</span>
+                </div>
+                <div class="card-body d-flex flex-column">
+                  ${it.description ? `<p class="card-text">${it.description}</p>` : ''}
+                  <div class="mt-auto">
+                    <div class="resource-meta">
+                      <i class="fas fa-graduation-cap"></i>
+                      <span>${[cls, subj].filter(Boolean).join(' • ')}</span>
+                    </div>
+                    <div class="resource-meta">
+                      <i class="far fa-calendar-alt"></i>
+                      <span>${formatDate(it.created_at)}</span>
+                    </div>
+                    <div class="d-grid gap-2 mt-3">
+                      <a href="${it.file}" class="btn btn-primary" target="_blank">
+                        <i class="${fileIcon} me-2"></i>View Resource
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        
+        html += '</div>';
+        resList.innerHTML = html;
+        
+        // Add animation to cards
+        document.querySelectorAll('.resource-card').forEach((card, index) => {
+          setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          }, index * 100);
+        });
+        
+      } catch(e) {
+        showError();
+        console.error('Error loading resources:', e);
+      }
+    }
+    
+    // Event listeners
+    document.getElementById('resSearchBtn').addEventListener('click', fetchResources);
+    document.getElementById('resResetBtn').addEventListener('click', resetFilters);
+    
+    // Add enter key support for search inputs
+    [resQuery, resSubject].forEach(input => {
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          fetchResources();
+        }
+      });
+    });
+    
+    // Change event for dropdown
+    resClass.addEventListener('change', fetchResources);
+    
+    // Initial load
+    fetchResources();
+  })();
+</script>
+{% endblock %}
+

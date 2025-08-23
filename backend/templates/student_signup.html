@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Signup</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title mb-4 text-center">Create Student Account</h3>
+                    <form id="studentSignupForm">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                            <div class="form-text">Username must be unique and used for login.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="full_name" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="full_name" name="full_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="date_of_birth" class="form-label">Date of Birth</label>
+                            <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="gender" class="form-label">Gender</label>
+                            <select class="form-select" id="gender" name="gender" required>
+                                <option value="">Select</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="student_class" class="form-label">Class/Grade</label>
+                            <input type="text" class="form-control" id="student_class" name="student_class" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone_number" class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" id="phone_number" name="phone_number">
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <input type="text" class="form-control" id="address" name="address">
+                        </div>
+                        <div class="mb-3">
+                            <label for="profile_photo" class="form-label">Profile Photo</label>
+                            <input type="file" class="form-control" id="profile_photo" name="profile_photo" accept="image/*">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="parent_name" class="form-label">Parent/Guardian Name</label>
+                            <input type="text" class="form-control" id="parent_name" name="parent_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="parent_contact" class="form-label">Parent/Guardian Contact</label>
+                            <input type="text" class="form-control" id="parent_contact" name="parent_contact">
+                        </div>
+                        <div class="mb-3">
+                            <label for="symbol_number" class="form-label">Symbol Number</label>
+                            <input type="text" class="form-control" id="symbol_number" name="symbol_number" readonly required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <button id="guestBtn" class="btn btn-outline-secondary w-100">Continue as Guest</button>
+                    </div>
+                    <div id="signupMsg" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+// CSRF helper function
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!/^GET|HEAD|OPTIONS|TRACE$/i.test(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+        }
+    }
+});
+$(function() {
+    // Fetch next symbol number and set it in the field
+    $.get('/api/next-symbol-number/', function(data) {
+        if (data.next_symbol_number) {
+            $('#symbol_number').val(data.next_symbol_number);
+        }
+    });
+    $('#studentSignupForm').on('submit', function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        formData.append('role', 'student');
+        formData.append('name', $('#full_name').val());
+        // Add username to formData explicitly for clarity
+        formData.set('username', $('#username').val());
+        formData.set('email', $('#email').val());
+        $.ajax({
+            url: '/api/register/',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                // Redirect to login page after signup
+                window.location.href = '/login/';
+            },
+            error: function(xhr) {
+                let msg = 'Signup failed. Please check your details.';
+                if (xhr.responseJSON) {
+                    msg += '<ul>';
+                    for (const [field, errors] of Object.entries(xhr.responseJSON)) {
+                        if (Array.isArray(errors)) {
+                            msg += `<li><b>${field}:</b> ${errors.join(', ')}</li>`;
+                        } else if (typeof errors === 'string') {
+                            msg += `<li><b>${field}:</b> ${errors}</li>`;
+                        }
+                    }
+                    msg += '</ul>';
+                } else if (xhr.responseText) {
+                    msg += `<div>${xhr.responseText}</div>`;
+                }
+                $('#signupMsg').html('<div class="alert alert-danger">' + msg + '</div>');
+                // Optionally, highlight fields with errors
+                $('#studentSignupForm input, #studentSignupForm select').removeClass('is-invalid');
+                if (xhr.responseJSON) {
+                    for (const field in xhr.responseJSON) {
+                        $(`#studentSignupForm [name='${field}']`).addClass('is-invalid');
+                    }
+                }
+            }
+        });
+    });
+    $('#guestBtn').on('click', function() {
+        window.location.href = '/'; // Redirect guest to homepage or desired page
+    });
+});
+</script>
+</body>
+</html> 
