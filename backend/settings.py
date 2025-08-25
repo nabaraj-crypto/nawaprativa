@@ -61,7 +61,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'core',
     'django_extensions',
-    
+
 ]
 
 MIDDLEWARE = [
@@ -104,16 +104,16 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database configuration
 # Uses environment variables if available, otherwise falls back to local PostgreSQL
-#DATABASES = {
-    #'default': {
-        #'ENGINE': 'django.db.backends.postgresql',
-        #'NAME': 'nawaprativa_l1gs',
-        #'USER': 'nawaprativa_l1gs_user',
-        #'PASSWORD': 'gSCppbgr9SfaaK3ROYurYH3L554YjBJ8',
-        #'HOST': 'dpg-d2l1n275r7bs73d83170-a',
-        #'PORT': '5432',
- #   }
-#}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'nawaprativa_l1gs',
+        'USER': 'nawaprativa_l1gs_user',
+        'PASSWORD': 'gSCppbgr9SfaaK3ROYurYH3L554YjBJ8',
+        'HOST': 'dpg-d2l1n275r7bs73d83170-a',
+        'PORT': '5432',
+    }
+}
 #DATABASES = {
  #   'default': {
   #      'ENGINE': 'django.db.backends.sqlite3',
@@ -122,37 +122,8 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 #}
 
 
-import os
-from pathlib import Path
-from dotenv import load_dotenv
 
-# Make sure BASE_DIR is defined if not already
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Load .env file
-load_dotenv()
-
-# Get the engine type from environment, default to sqlite
-DB_ENGINE = os.environ.get('DB_ENGINE', 'sqlite').lower()
-
-if DB_ENGINE == 'postgres':
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DB_NAME', 'nawaprativa_l1gs'),
-            'USER': os.environ.get('DB_USER', 'nawaprativa_l1gs_user'),
-            'PASSWORD': os.environ.get('DB_PASSWORD', 'gSCppbgr9SfaaK3ROYurYH3L554YjBJ8'),
-            'HOST': os.environ.get('DB_HOST', 'dpg-d2l1n275r7bs73d83170-a'),
-            'PORT': os.environ.get('DB_PORT', '5432'),
-        }
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+  
 
 
 
