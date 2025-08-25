@@ -130,10 +130,13 @@ DATABASES = {
         'NAME': 'nawaprativa_l1gs',
         'USER': 'nawaprativa_l1gs_user',
         'PASSWORD': 'gSCppbgr9SfaaK3ROYurYH3L554YjBJ8',
-        'HOST': 'dpg-d2l1n275r7bs73d83170-a',
+        #  Use EXTERNAL host for local development
+        'HOST': 'dpg-d2l1n275r7bs73d83170-a.singapore-postgres.render.com',
         'PORT': '5432',
     }
 }
+
+
 #DATABASES = {
  #   'default': {
   #      'ENGINE': 'django.db.backends.sqlite3',
