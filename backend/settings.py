@@ -42,10 +42,30 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-tb2qkxzlau+(^(3qebdsk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get(
-    'ALLOWED_HOSTS', 
-    'nawaprativa-4ewa.onrender.com,localhost,127.0.0.1,nawaprativaschool.onrender.com,nawaprativa.edu.np,www.nawaprativa.edu.np'
-).split(',')
+import os
+
+# Get ALLOWED_HOSTS from environment variable, split by comma if exists
+env_allowed_hosts = os.environ.get('ALLOWED_HOSTS')
+if env_allowed_hosts:
+    ALLOWED_HOSTS = env_allowed_hosts.split(',')
+else:
+    ALLOWED_HOSTS = []
+
+# Always include your main Render hostname
+ALLOWED_HOSTS.append('nawaprativa-4ewa.onrender.com')
+
+# Include other common/fallback hosts
+ALLOWED_HOSTS += [
+    'localhost',
+    '127.0.0.1',
+    'nawaprativaschool.onrender.com',
+    'nawaprativa.edu.np',
+    'www.nawaprativa.edu.np'
+]
+
+# Remove duplicates
+ALLOWED_HOSTS = list(set(ALLOWED_HOSTS))
+
 
 
 
