@@ -44,7 +44,7 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.environ.get(
     'ALLOWED_HOSTS', 
-    'localhost,127.0.0.1,nawaprativaschool.onrender.com,nawaprativa.edu.np,www.nawaprativa.edu.np'
+    'nawaprativa-4ewa.onrender.com,localhost,127.0.0.1,nawaprativaschool.onrender.com,nawaprativa.edu.np,www.nawaprativa.edu.np'
 ).split(',')
 
 
