@@ -52,7 +52,7 @@ else:
     ALLOWED_HOSTS = []
 
 # Always include your main Render hostname
-ALLOWED_HOSTS.append('nawaprativa-4ewa.onrender.com')
+ALLOWED_HOSTS.append('nabarajkc.com.np')
 
 # Include other common/fallback hosts
 ALLOWED_HOSTS += [
@@ -61,7 +61,7 @@ ALLOWED_HOSTS += [
     'nawaprativaschool.onrender.com',
     'nawaprativa.edu.np',
     'www.nawaprativa.edu.np',
-    'www.nabarajkc.com.np'
+    'nawaprativa-4ewa.onrender.com'
 ]
 
 # Remove duplicates
