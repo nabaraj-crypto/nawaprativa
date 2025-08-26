@@ -61,7 +61,7 @@ ALLOWED_HOSTS += [
     'nawaprativaschool.onrender.com',
     'nawaprativa.edu.np',
     'www.nawaprativa.edu.np',
-    'nabarajkc.com.np'
+    'www.nabarajkc.com.np'
 ]
 
 # Remove duplicates
