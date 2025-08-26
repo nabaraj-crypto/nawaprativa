@@ -63,7 +63,7 @@ ALLOWED_HOSTS += [
     'www.nawaprativa.edu.np',
     'nawaprativa-4ewa.onrender.com',
     'nabarajkc.com.np'
-    
+
 ]
 
 # Remove duplicates
@@ -127,17 +127,17 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database configuration
 # Uses environment variables if available, otherwise falls back to local PostgreSQL
-#DATABASES = {
-    #'default': {
-        #'ENGINE': 'django.db.backends.postgresql',
-       # 'NAME': 'nawaprativa_l1gs',
-      #  'USER': 'nawaprativa_l1gs_user',
-     #   'PASSWORD': 'gSCppbgr9SfaaK3ROYurYH3L554YjBJ8',
-    #    #  Use EXTERNAL host for local development
-   #     'HOST': 'dpg-d2l1n275r7bs73d83170-a.singapore-postgres.render.com',
-  #      'PORT': '5432',
- #   }
-#}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'nawaprativa_l1gs',
+        'USER': 'nawaprativa_l1gs_user',
+        'PASSWORD': 'gSCppbgr9SfaaK3ROYurYH3L554YjBJ8',
+        #  Use EXTERNAL host for local development
+        'HOST': 'dpg-d2l1n275r7bs73d83170-a.singapore-postgres.render.com',
+        'PORT': '5432',
+   }
+}
 
 
 #DATABASES = {
@@ -149,26 +149,26 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 
 
-import os
-from pathlib import Path
-from dotenv import load_dotenv
+#import os
+#from pathlib import Path
+#from dotenv import load_dotenv
 
 # Load environment variables from .env file
-load_dotenv()
+#load_dotenv()
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+#BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Database configuration using environment variables
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
-    }
-}
+#DATABASES = {
+    #'default': {
+       # 'ENGINE': 'django.db.backends.postgresql',
+      #  'NAME': os.getenv('DB_NAME'),
+     #   'USER': os.getenv('DB_USER'),
+    #    'PASSWORD': os.getenv('DB_PASSWORD'),
+   #     'HOST': os.getenv('DB_HOST'),
+  #      'PORT': os.getenv('DB_PORT'),
+ #   }
+#}
 
 
 
